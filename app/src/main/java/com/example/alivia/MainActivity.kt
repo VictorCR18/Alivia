@@ -6,42 +6,28 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.alivia.navigation.NavGraph
 import com.example.alivia.ui.theme.AliviaTheme
 
+@ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            AliviaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            NavGraph(
+                onSettingsClick = {
+                    // Ação para Configurações (pode abrir uma nova tela ou exibir um diálogo)
+                },
+                onHelpClick = {
+                    // Ação para Ajuda (pode abrir uma nova tela ou exibir um diálogo)
                 }
-            }
+            )
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AliviaTheme {
-        Greeting("Android")
     }
 }
