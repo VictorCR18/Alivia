@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.screens
+package com.example.alivia.ui.screens
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
-import com.example.nightevent.models.eventList
+import com.example.alivia.models.eventList
 
 @Composable
 fun HomeScreen(navController: NavHostController, context: Context) {

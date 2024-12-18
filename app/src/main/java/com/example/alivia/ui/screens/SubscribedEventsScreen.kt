@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.screens
+package com.example.alivia.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -11,12 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,26 +21,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.nightevent.models.eventList
+import com.example.alivia.models.eventList
 
 @Composable
-fun FavoritesScreen(navController: NavHostController) {
-    // Observa as mudanças no estado de favoritos dinamicamente
-    val favoriteEvents = eventList.filter { it.isFavorite.value }
+fun SubscribedEventsScreen(navController: NavHostController) {
+    val subscribedEvents = eventList.filter { it.isSubscribed.value }
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
     ) {
-        if (favoriteEvents.isEmpty()) {
+        if (subscribedEvents.isEmpty()) {
             item {
                 Text(
-                    text = "Você ainda não tem eventos favoritos.",
+                    text = "Você ainda não está inscrito em nenhum evento.",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(16.dp)
                 )
             }
         } else {
-            items(favoriteEvents) { event ->
+            items(subscribedEvents) { event ->
                 Card(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
@@ -60,8 +55,7 @@ fun FavoritesScreen(navController: NavHostController) {
                         Image(
                             painter = painterResource(id = event.imageRes),
                             contentDescription = "Imagem do evento",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
+                            contentScale = ContentScale.Crop, modifier = Modifier
                                 .size(80.dp)
                                 .padding(end = 16.dp)
                         )
@@ -90,21 +84,13 @@ fun FavoritesScreen(navController: NavHostController) {
                                 maxLines = 2 // Limita o texto a 2 linhas
                             )
                         }
-                        // Ícone de favorito
-                        Icon(
-                            imageVector = if (event.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable {
-                                    // Alterna o estado de favorito
-                                    event.isFavorite.value = !event.isFavorite.value
-                                }
-                        )
                     }
                 }
             }
         }
     }
 }
+
+
+
+

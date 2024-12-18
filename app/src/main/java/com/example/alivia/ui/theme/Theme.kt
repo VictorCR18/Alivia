@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.theme
+package com.example.alivia.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.components
+package com.example.alivia.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

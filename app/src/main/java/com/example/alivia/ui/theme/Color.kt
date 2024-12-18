@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.theme
+package com.example.alivia.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

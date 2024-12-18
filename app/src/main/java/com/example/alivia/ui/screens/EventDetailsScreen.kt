@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.screens
+package com.example.alivia.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.nightevent.models.eventList
+import com.example.alivia.models.eventList
 
 @Composable
 fun EventDetailsScreen(eventId: String?) {

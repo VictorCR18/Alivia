@@ -1,8 +1,8 @@
-package com.example.nightevent.models
+package com.example.alivia.models
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.example.nightevent.R
+import com.example.alivia.R
 
 data class Event(
     val id: Int,

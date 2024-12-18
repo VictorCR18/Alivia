@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.theme
+package com.example.alivia.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

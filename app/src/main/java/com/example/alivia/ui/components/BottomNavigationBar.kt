@@ -1,4 +1,4 @@
-package com.example.nightevent.ui.components
+package com.example.alivia.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Event

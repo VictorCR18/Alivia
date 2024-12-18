@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NightEvent"
+rootProject.name = "Alivia"
 include(":app")

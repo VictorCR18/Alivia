@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.nightevent"
+    namespace = "com.example.alivia"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.nightevent"
+        applicationId = "com.example.alivia"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

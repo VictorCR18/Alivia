@@ -1,4 +1,4 @@
-package com.example.nightevent
+package com.example.alivia
 
 import org.junit.Test
 

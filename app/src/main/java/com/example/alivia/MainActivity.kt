@@ -1,4 +1,4 @@
-package com.example.nightevent
+package com.example.alivia
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,14 +17,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.nightevent.ui.components.BottomNavigationBar
-import com.example.nightevent.ui.components.DrawerContent
-import com.example.nightevent.ui.components.TopBar
-import com.example.nightevent.ui.screens.EventDetailsScreen
-import com.example.nightevent.ui.screens.FavoritesScreen
-import com.example.nightevent.ui.screens.HomeScreen
-import com.example.nightevent.ui.screens.SubscribedEventsScreen
-import com.example.nightevent.ui.theme.NightEventsAppTheme
+import com.example.alivia.ui.components.BottomNavigationBar
+import com.example.alivia.ui.components.DrawerContent
+import com.example.alivia.ui.components.TopBar
+import com.example.alivia.ui.screens.EventDetailsScreen
+import com.example.alivia.ui.screens.FavoritesScreen
+import com.example.alivia.ui.screens.HomeScreen
+import com.example.alivia.ui.screens.SubscribedEventsScreen
+import com.example.alivia.ui.theme.NightEventsAppTheme
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
