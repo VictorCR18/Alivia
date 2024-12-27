@@ -1,7 +1,7 @@
 package com.example.alivia.ui.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
@@ -17,7 +17,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         // Lista de itens com rotas, rótulos e ícones
         val items = listOf(
             Triple("home", "Home", Icons.Default.Home),
-            Triple("events", "Inscritos", Icons.Default.Event),
+            Triple("training", "Inscritos", Icons.Default.CheckCircle),
             Triple("favorites", "Favoritos", Icons.Default.Favorite)
         )
         items.forEach { (route, label, icon) ->

@@ -20,11 +20,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.alivia.ui.components.BottomNavigationBar
 import com.example.alivia.ui.components.DrawerContent
 import com.example.alivia.ui.components.TopBar
-import com.example.alivia.ui.screens.EventDetailsScreen
+import com.example.alivia.ui.screens.TrainingDetailsScreen
 import com.example.alivia.ui.screens.FavoritesScreen
 import com.example.alivia.ui.screens.HomeScreen
-import com.example.alivia.ui.screens.SubscribedEventsScreen
-import com.example.alivia.ui.theme.NightEventsAppTheme
+import com.example.alivia.ui.screens.SubscribedTrainingScreen
+import com.example.alivia.ui.theme.AliviaTheme
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
             val isDarkTheme = remember { mutableStateOf(false) }
-            NightEventsAppTheme(darkTheme = isDarkTheme.value) {
+            AliviaTheme(darkTheme = isDarkTheme.value) {
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     gesturesEnabled = true,
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         Scaffold(
                             topBar = {
                                 TopBar(
-                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
+//                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
                                     onOpenDrawer = { scope.launch { drawerState.open() } }
                                 )
                             },
@@ -66,11 +66,11 @@ class MainActivity : ComponentActivity() {
                                         context = LocalContext.current
                                     )
                                 }
-                                composable("events") { SubscribedEventsScreen(navController) }
+                                composable("training") { SubscribedTrainingScreen(navController) }
                                 composable("favorites") { FavoritesScreen(navController) }
-                                composable("eventDetails/{eventId}") { backStackEntry ->
-                                    val eventId = backStackEntry.arguments?.getString("eventId")
-                                    EventDetailsScreen(eventId = eventId)
+                                composable("trainingDetails/{eventId}") { backStackEntry ->
+                                    val trainingId = backStackEntry.arguments?.getString("eventId")
+                                    TrainingDetailsScreen(trainingId = trainingId)
                                 }
                             }
                         }

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
-import com.example.alivia.models.eventList
+import com.example.alivia.models.trainingList
 
 @Composable
 fun HomeScreen(navController: NavHostController, context: Context) {
@@ -48,9 +48,9 @@ fun HomeScreen(navController: NavHostController, context: Context) {
 
     Column {
         // Seção de eventos inscritos no estilo LazyRow
-        val subscribedEvents = eventList.filter { it.isSubscribed.value }
+        val subscribedTraining = trainingList.filter { it.isSubscribed.value }
 
-        if (subscribedEvents.isNotEmpty()) {
+        if (subscribedTraining.isNotEmpty()) {
             Text(
                 text = "Eventos Inscritos",
                 style = MaterialTheme.typography.titleSmall,
@@ -61,17 +61,17 @@ fun HomeScreen(navController: NavHostController, context: Context) {
                 modifier = Modifier.padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(subscribedEvents) { event ->
+                items(subscribedTraining) { training ->
                     Card(
                         modifier = Modifier
                             .size(60.dp)
                             .clickable {
-                                navController.navigate("eventDetails/${event.id}")
+                                navController.navigate("trainingDetails/${training.id}")
                             }, elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = event.imageRes),
-                            contentDescription = event.title,
+                            painter = painterResource(id = training.imageRes),
+                            contentDescription = training.title,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -85,12 +85,12 @@ fun HomeScreen(navController: NavHostController, context: Context) {
         LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {
-            items(eventList) { event ->
+            items(trainingList) { training ->
                 Card(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .clickable {
-                            navController.navigate("eventDetails/${event.id}")
+                            navController.navigate("trainingDetails/${training.id}")
                         }, elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(
@@ -103,8 +103,8 @@ fun HomeScreen(navController: NavHostController, context: Context) {
                         ) {
                             // Imagem do evento
                             Image(
-                                painter = painterResource(id = event.imageRes),
-                                contentDescription = event.title,
+                                painter = painterResource(id = training.imageRes),
+                                contentDescription = training.title,
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clip(CircleShape),
@@ -115,31 +115,31 @@ fun HomeScreen(navController: NavHostController, context: Context) {
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = event.title, style = MaterialTheme.typography.titleMedium
+                                    text = training.title, style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = event.location,
+                                    text = training.location,
                                     style = MaterialTheme.typography.bodySmall,
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
                             }
 
                             // Ícone de favorito
-                            Icon(imageVector = if (event.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            Icon(imageVector = if (training.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Favorite",
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clickable {
-                                        event.isFavorite.value =
-                                            !event.isFavorite.value // Atualiza o estado de favorito
+                                        training.isFavorite.value =
+                                            !training.isFavorite.value // Atualiza o estado de favorito
                                     })
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
 // Descrição do evento
                         Text(
-                            text = event.description,
+                            text = training.description,
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
@@ -149,25 +149,25 @@ fun HomeScreen(navController: NavHostController, context: Context) {
 // Botão "Se Inscrever" ou "Inscrito"
                         Button(
                             onClick = {
-                                event.isSubscribed.value =
-                                    !event.isSubscribed.value // Alterna o estado de inscrição
-                                if (event.isSubscribed.value) {
-                                    sendNotification(context, event.title) // Envia notificação
+                                training.isSubscribed.value =
+                                    !training.isSubscribed.value // Alterna o estado de inscrição
+                                if (training.isSubscribed.value) {
+                                    sendNotification(context, training.title) // Envia notificação
                                 }
                             }, modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = if (event.isSubscribed.value) "Inscrito" else "Se Inscrever" // Altera o texto dinamicamente
+                                text = if (training.isSubscribed.value) "Inscrito" else "Se Inscrever" // Altera o texto dinamicamente
                             )
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
 // Botão "Ver mais sobre"
                         Button(
-                            onClick = { navController.navigate("eventDetails/${event.id}") },
+                            onClick = { navController.navigate("trainingDetails/${training.id}") },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = "Ver mais sobre ${event.title}")
+                            Text(text = "Ver mais sobre ${training.title}")
                         }
                     }
                 }

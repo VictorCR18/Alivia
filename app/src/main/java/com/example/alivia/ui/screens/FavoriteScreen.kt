@@ -25,17 +25,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.alivia.models.eventList
+import com.example.alivia.models.trainingList
 
 @Composable
 fun FavoritesScreen(navController: NavHostController) {
     // Observa as mudanças no estado de favoritos dinamicamente
-    val favoriteEvents = eventList.filter { it.isFavorite.value }
+    val favoriteTraining = trainingList.filter { it.isFavorite.value }
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
     ) {
-        if (favoriteEvents.isEmpty()) {
+        if (favoriteTraining.isEmpty()) {
             item {
                 Text(
                     text = "Você ainda não tem eventos favoritos.",
@@ -44,12 +44,12 @@ fun FavoritesScreen(navController: NavHostController) {
                 )
             }
         } else {
-            items(favoriteEvents) { event ->
+            items(favoriteTraining) { training ->
                 Card(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .clickable {
-                            navController.navigate("eventDetails/${event.id}")
+                            navController.navigate("trainingDetails/${training.id}")
                         },
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
@@ -58,7 +58,7 @@ fun FavoritesScreen(navController: NavHostController) {
                     ) {
                         // Exibe a imagem do evento
                         Image(
-                            painter = painterResource(id = event.imageRes),
+                            painter = painterResource(id = training.imageRes),
                             contentDescription = "Imagem do evento",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -71,35 +71,35 @@ fun FavoritesScreen(navController: NavHostController) {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = event.title,
+                                text = training.title,
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = event.date,
+                                text = training.date,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = event.location,
+                                text = training.location,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = event.description,
+                                text = training.description,
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 2 // Limita o texto a 2 linhas
                             )
                         }
                         // Ícone de favorito
                         Icon(
-                            imageVector = if (event.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            imageVector = if (training.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favorite",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable {
                                     // Alterna o estado de favorito
-                                    event.isFavorite.value = !event.isFavorite.value
+                                    training.isFavorite.value = !training.isFavorite.value
                                 }
                         )
                     }

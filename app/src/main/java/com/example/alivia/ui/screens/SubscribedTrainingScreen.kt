@@ -21,16 +21,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.alivia.models.eventList
+import com.example.alivia.models.trainingList
 
 @Composable
-fun SubscribedEventsScreen(navController: NavHostController) {
-    val subscribedEvents = eventList.filter { it.isSubscribed.value }
+fun SubscribedTrainingScreen(navController: NavHostController) {
+    val subscribedTraining = trainingList.filter { it.isSubscribed.value }
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
     ) {
-        if (subscribedEvents.isEmpty()) {
+        if (subscribedTraining.isEmpty()) {
             item {
                 Text(
                     text = "Você ainda não está inscrito em nenhum evento.",
@@ -39,12 +39,12 @@ fun SubscribedEventsScreen(navController: NavHostController) {
                 )
             }
         } else {
-            items(subscribedEvents) { event ->
+            items(subscribedTraining) { training ->
                 Card(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .clickable {
-                            navController.navigate("eventDetails/${event.id}")
+                            navController.navigate("trainingDetails/${training.id}")
                         },
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
@@ -53,7 +53,7 @@ fun SubscribedEventsScreen(navController: NavHostController) {
                     ) {
                         // Exibe a imagem do evento
                         Image(
-                            painter = painterResource(id = event.imageRes),
+                            painter = painterResource(id = training.imageRes),
                             contentDescription = "Imagem do evento",
                             contentScale = ContentScale.Crop, modifier = Modifier
                                 .size(80.dp)
@@ -65,21 +65,21 @@ fun SubscribedEventsScreen(navController: NavHostController) {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = event.title,
+                                text = training.title,
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = event.date,
+                                text = training.date,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = event.location,
+                                text = training.location,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = event.description,
+                                text = training.description,
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 2 // Limita o texto a 2 linhas
                             )

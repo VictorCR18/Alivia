@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.alivia.models.eventList
+import com.example.alivia.models.trainingList
 
 @Composable
-fun EventDetailsScreen(eventId: String?) {
-    val event = eventList.find { it.id.toString() == eventId } // Usando a lista atualizada
-    event?.let {
+fun TrainingDetailsScreen(trainingId: String?) {
+    val training= trainingList.find { it.id.toString() == trainingId } // Usando a lista atualizada
+    training?.let {
         Card(
             modifier = Modifier
                 .padding(16.dp)
