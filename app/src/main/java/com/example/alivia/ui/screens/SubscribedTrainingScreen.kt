@@ -21,11 +21,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.alivia.models.trainingList
+import com.example.alivia.models.stretchingSessions
 
 @Composable
 fun SubscribedTrainingScreen(navController: NavHostController) {
-    val subscribedTraining = trainingList.filter { it.isSubscribed.value }
+    val subscribedTraining = stretchingSessions.filter { it.isSubscribed.value }
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
@@ -70,11 +70,11 @@ fun SubscribedTrainingScreen(navController: NavHostController) {
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = training.date,
+                                text = training.description,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = training.location,
+                                text = training.description,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))
@@ -90,7 +90,3 @@ fun SubscribedTrainingScreen(navController: NavHostController) {
         }
     }
 }
-
-
-
-
