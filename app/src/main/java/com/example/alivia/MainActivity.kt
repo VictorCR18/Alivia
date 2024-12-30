@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         Scaffold(
                             topBar = {
                                 TopBar(
-//                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
+                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
                                     onOpenDrawer = { scope.launch { drawerState.open() } }
                                 )
                             },
