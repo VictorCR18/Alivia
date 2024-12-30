@@ -25,12 +25,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.alivia.models.trainingList
+import com.example.alivia.models.stretchingSessions
 
 @Composable
 fun FavoritesScreen(navController: NavHostController) {
     // Observa as mudanças no estado de favoritos dinamicamente
-    val favoriteTraining = trainingList.filter { it.isFavorite.value }
+    val favoriteTraining = stretchingSessions.filter { it.exercises.any { exercise -> exercise.isFavorite.value } }
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
@@ -76,11 +76,11 @@ fun FavoritesScreen(navController: NavHostController) {
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = training.date,
+                                text = training.description,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = training.location,
+                                text = training.description,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))

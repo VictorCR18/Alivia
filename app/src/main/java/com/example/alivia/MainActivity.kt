@@ -20,10 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.alivia.ui.components.BottomNavigationBar
 import com.example.alivia.ui.components.DrawerContent
 import com.example.alivia.ui.components.TopBar
-import com.example.alivia.ui.screens.TrainingDetailsScreen
 import com.example.alivia.ui.screens.FavoritesScreen
 import com.example.alivia.ui.screens.HomeScreen
 import com.example.alivia.ui.screens.SubscribedTrainingScreen
+import com.example.alivia.ui.screens.TrainingDetailsScreen
 import com.example.alivia.ui.theme.AliviaTheme
 import kotlinx.coroutines.launch
 
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         Scaffold(
                             topBar = {
                                 TopBar(
-//                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
+                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
                                     onOpenDrawer = { scope.launch { drawerState.open() } }
                                 )
                             },
@@ -70,7 +70,8 @@ class MainActivity : ComponentActivity() {
                                 composable("favorites") { FavoritesScreen(navController) }
                                 composable("trainingDetails/{eventId}") { backStackEntry ->
                                     val trainingId = backStackEntry.arguments?.getString("eventId")
-                                    TrainingDetailsScreen(trainingId = trainingId)
+                                    val context = LocalContext.current
+                                    TrainingDetailsScreen(trainingId = trainingId, context = context)
                                 }
                             }
                         }

@@ -6,40 +6,40 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
-import com.example.alivia.models.trainingList
+import com.example.alivia.models.stretchingSessions
 
 @Composable
 fun HomeScreen(navController: NavHostController, context: Context) {
@@ -47,132 +47,72 @@ fun HomeScreen(navController: NavHostController, context: Context) {
     createNotificationChannel(context)
 
     Column {
-        // Seção de eventos inscritos no estilo LazyRow
-        val subscribedTraining = trainingList.filter { it.isSubscribed.value }
-
-        if (subscribedTraining.isNotEmpty()) {
-            Text(
-                text = "Eventos Inscritos",
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.padding(16.dp)
-            )
-
-            LazyRow(
-                modifier = Modifier.padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(subscribedTraining) { training ->
-                    Card(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clickable {
-                                navController.navigate("trainingDetails/${training.id}")
-                            }, elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = training.imageRes),
-                            contentDescription = training.title,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
-            }
-        }
         Spacer(modifier = Modifier.height(16.dp))
-
 // Seção principal com a lista de todos os eventos
         LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {
-            items(trainingList) { training ->
+            items(stretchingSessions) { training ->
                 Card(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .clickable {
                             navController.navigate("trainingDetails/${training.id}")
-                        }, elevation = CardDefaults.cardElevation(4.dp)
+                        },
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Column(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .height(160.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            // Imagem do evento
-                            Image(
-                                painter = painterResource(id = training.imageRes),
-                                contentDescription = training.title,
-                                modifier = Modifier
-                                    .size(64.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    text = training.title, style = MaterialTheme.typography.titleMedium
-                                )
-                                Text(
-                                    text = training.location,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
-
-                            // Ícone de favorito
-                            Icon(imageVector = if (training.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clickable {
-                                        training.isFavorite.value =
-                                            !training.isFavorite.value // Atualiza o estado de favorito
-                                    })
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-// Descrição do evento
-                        Text(
-                            text = training.description,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                        // Imagem do evento
+                        Image(
+                            painter = painterResource(id = training.imageRes),
+                            contentDescription = training.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+//                                .clip(CardDefaults.shape)
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        // Gradiente de fundo
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            Color.Black.copy(alpha = 0.7f)
+                                        )
+                                    )
+                                )
+                        )
 
-// Botão "Se Inscrever" ou "Inscrito"
-                        Button(
-                            onClick = {
-                                training.isSubscribed.value =
-                                    !training.isSubscribed.value // Alterna o estado de inscrição
-                                if (training.isSubscribed.value) {
-                                    sendNotification(context, training.title) // Envia notificação
-                                }
-                            }, modifier = Modifier.fillMaxWidth()
+                        // Conteúdo textual sobreposto
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(16.dp)
                         ) {
                             Text(
-                                text = if (training.isSubscribed.value) "Inscrito" else "Se Inscrever" // Altera o texto dinamicamente
+                                text = training.title,
+                                style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
                             )
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-// Botão "Ver mais sobre"
-                        Button(
-                            onClick = { navController.navigate("trainingDetails/${training.id}") },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(text = "Ver mais sobre ${training.title}")
+                            Text(
+                                text = training.description,
+                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
                         }
                     }
                 }
             }
         }
+
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
