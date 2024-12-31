@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,7 +79,7 @@ fun HelpAndSupportScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .height(56.dp)
                 .background(
-                    color = Color(0xFF267A9C),
+                    color = Color.White,
                     shape = MaterialTheme.shapes.medium // Bordas arredondadas
                 )
                 .border(
@@ -114,8 +115,11 @@ fun HelpAndSupportScreen(navController: NavHostController) {
                 confirmationMessage = "Mensagem enviada: $message"
                 message = ""
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF267A9C),
+                contentColor = Color.White
+            )        ) {
             Text(text = "Enviar Mensagem")
         }
 
