@@ -3,14 +3,16 @@ package com.example.alivia.models
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.example.alivia.R
+
 data class StretchingExercise(
     val id: Int,
     val name: String,
     val description: String,
-    val duration: String, // Duração do exercício (em minutos ou segundos)
-    val imageRes: Int, // Imagem do exercício (opcional)
+    val duration: String, // Duração do exercício
+    val imageRes: Int, // Imagem do exercício
+    val videoFileName: String, // Nome do arquivo de vídeo no diretório 'raw'
     val isFavorite: MutableState<Boolean> = mutableStateOf(false),
-    )
+)
 
 data class StretchingSession(
     val id: Int,
@@ -25,7 +27,7 @@ data class StretchingSession(
 
 // Enum para representar as diferentes partes do corpo
 enum class BodyPart {
-    LEGS, ARMS, BACK
+    LEGS, ARMS, BACK, FULL_BODY
 }
 
 val stretchingSessions = listOf(
@@ -41,14 +43,23 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos da parte de trás da coxa.",
                 duration = "30 segundos",
                 imageRes = R.drawable.img3,
-                isFavorite = mutableStateOf(false)
-                ),
+                videoFileName = "videoplayback"
+            ),
             StretchingExercise(
                 id = 2,
                 name = "Alongamento de Quadríceps",
                 description = "Estique os músculos da parte frontal da coxa.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
+            ),
+            StretchingExercise(
+                id = 3,
+                name = "Alongamento de Panturrilha",
+                description = "Estique os músculos da panturrilha.",
+                duration = "20 segundos",
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),
@@ -62,18 +73,28 @@ val stretchingSessions = listOf(
         bodyPart = BodyPart.ARMS,
         exercises = listOf(
             StretchingExercise(
-                id = 1,
+                id = 4,
                 name = "Alongamento de Bíceps",
                 description = "Estique os músculos do bíceps.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
             ),
             StretchingExercise(
-                id = 2,
+                id = 5,
                 name = "Alongamento de Tríceps",
                 description = "Estique os músculos do tríceps.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
+            ),
+            StretchingExercise(
+                id = 6,
+                name = "Alongamento de Ombros",
+                description = "Estique os músculos dos ombros.",
+                duration = "20 segundos",
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),
@@ -87,18 +108,47 @@ val stretchingSessions = listOf(
         bodyPart = BodyPart.BACK,
         exercises = listOf(
             StretchingExercise(
-                id = 1,
+                id = 7,
                 name = "Alongamento de Coluna",
                 description = "Estique a coluna, mantendo a postura correta.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
             ),
             StretchingExercise(
-                id = 2,
+                id = 8,
                 name = "Alongamento de Lombar",
                 description = "Estique os músculos da região lombar.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
+            ),
+            StretchingExercise(
+                id = 9,
+                name = "Alongamento de Trapézio",
+                description = "Alivie a tensão no trapézio.",
+                duration = "20 segundos",
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
+            )
+        ),
+        isFavorite = mutableStateOf(false),
+        isSubscribed = mutableStateOf(false),
+        imageRes = R.drawable.img3
+    ),
+    StretchingSession(
+        id = 4,
+        title = "Alongamento Completo",
+        description = "Exercícios para alongar o corpo inteiro.",
+        bodyPart = BodyPart.FULL_BODY,
+        exercises = listOf(
+            StretchingExercise(
+                id = 10,
+                name = "Alongamento de Corpo Inteiro",
+                description = "Alongue todos os principais grupos musculares.",
+                duration = "60 segundos",
+                imageRes = R.drawable.img3,
+                videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),

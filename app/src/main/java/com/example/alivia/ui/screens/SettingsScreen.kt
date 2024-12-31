@@ -1,6 +1,8 @@
 package com.example.alivia.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +26,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.alivia.ui.components.createNotificationChannel
+import com.example.alivia.ui.components.sendNotification
 
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
     onThemeToggle: () -> Unit, // Callback para alternar tema
-    isDarkThemeEnabled: Boolean // Estado atual do tema
+    isDarkThemeEnabled: Boolean, // Estado atual do tema
+    context: Context // Contexto para enviar notificações
 ) {
     // Estado para notificações
     val isNotificationsEnabled = remember { mutableStateOf(false) }
@@ -66,10 +71,20 @@ fun SettingsScreen(
             title = "Notificações",
             description = "Ativar/desativar notificações do aplicativo",
             isChecked = isNotificationsEnabled.value,
-            onCheckedChange = { isNotificationsEnabled.value = it }
+            onCheckedChange = {
+                isNotificationsEnabled.value = it
+                if (it) {
+                    // Ativar notificações
+                    createNotificationChannel(context)
+                    sendNotification(context, "Notificação ativada")
+                } else {
+                    // Desativar notificações
+                    sendNotification(context, "Notificação desativada")
+                }
+            }
         )
 
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(6.dp))
 
         // Opção de Tema Escuro
         RowOption(
@@ -88,28 +103,34 @@ fun RowOption(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start // Alinha os itens à esquerda
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 18.sp
-        )
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
         Switch(
             checked = isChecked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+            modifier = Modifier.padding(end = 16.dp) // Espaço à direita do Switch
         )
+
+        Column(
+            modifier = Modifier.weight(1f) // Faz a descrição e título ocuparem o restante do espaço
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 18.sp
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+        }
     }
 }
+

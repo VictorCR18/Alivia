@@ -1,6 +1,8 @@
 package com.example.alivia.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.pager.*
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Brush
 
 @Composable
-fun ImageCarousel(imageList: List<Int>) {
+fun ImageCarousel(imageList: List<Int>, levels: List<String>) {
     val pagerState = rememberPagerState()
 
     Column {
@@ -28,12 +32,49 @@ fun ImageCarousel(imageList: List<Int>) {
                 .fillMaxWidth()
                 .height(177.dp)
         ) { page ->
-            Image(
-                painter = painterResource(id = imageList[page]),
-                contentDescription = "Imagem $page",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                // Exibir a imagem
+                Image(
+                    painter = painterResource(id = imageList[page]),
+                    contentDescription = "Imagem $page",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Exibir o texto sobreposto (nível)
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.7f)
+                                )
+                            )
+                        )
+                )
+
+                // Texto sobreposto com o nível (Iniciante, Intermediário, Avançado)
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = when (levels[page]) {
+                            "beginner" -> "Iniciante"
+                            "intermediate" -> "Intermediário"
+                            "advanced" -> "Avançado"
+                            else -> "Desconhecido"
+                        },
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = Color.White,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        )
+                    )
+                }
+            }
         }
 
         // Indicadores (bolinhas)

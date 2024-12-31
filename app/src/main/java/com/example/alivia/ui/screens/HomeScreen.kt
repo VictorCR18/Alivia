@@ -38,9 +38,6 @@ import com.example.alivia.ui.components.ImageCarousel
 
 @Composable
 fun HomeScreen(navController: NavHostController, context: Context) {
-    // Cria o canal de notificação
-    createNotificationChannel(context)
-
     Column {
         // Usar o componente do carrossel
         val images = listOf(
@@ -48,7 +45,10 @@ fun HomeScreen(navController: NavHostController, context: Context) {
             R.drawable.img3,
             R.drawable.img3
         )
-        ImageCarousel(imageList = images)
+        // Lista com os níveis correspondentes às imagens
+        val levels = listOf("beginner", "intermediate", "advanced")
+
+        ImageCarousel(imageList = images, levels = levels)
 
 // Seção principal com a lista de todos os eventos
         LazyColumn(
@@ -115,35 +115,6 @@ fun HomeScreen(navController: NavHostController, context: Context) {
 
 
         Spacer(modifier = Modifier.height(8.dp))
-    }
-}
-
-// Função para criar o canal de notificação
-private fun createNotificationChannel(context: Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val name = "Inscrição de Eventos"
-        val descriptionText = "Canal para notificações de inscrição em eventos"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel("EVENT_CHANNEL", name, importance).apply {
-            description = descriptionText
-        }
-        val notificationManager: NotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
-}
-
-// Função para enviar a notificação
-@SuppressLint("MissingPermission", "NotificationPermission")
-private fun sendNotification(context: Context, eventTitle: String) {
-    val builder = NotificationCompat.Builder(context, "EVENT_CHANNEL")
-        .setSmallIcon(android.R.drawable.ic_notification_overlay) // Use um ícone apropriado
-        .setContentTitle("Inscrição Confirmada")
-        .setContentText("Você foi inscrito no evento: $eventTitle")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-    with(NotificationManagerCompat.from(context)) {
-        notify(eventTitle.hashCode(), builder.build()) // ID único por evento
     }
 }
 

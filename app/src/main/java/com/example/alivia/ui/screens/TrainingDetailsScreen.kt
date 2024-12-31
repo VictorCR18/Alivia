@@ -31,10 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
 
 @Composable
-fun TrainingDetailsScreen(trainingId: String?, context: Context) {
+fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: NavHostController) {
     val training =
         stretchingSessions.find { it.id.toString() == trainingId } // Usando a lista atualizada
     training?.let {
@@ -95,7 +96,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context) {
                         modifier = Modifier
                             .padding(vertical = 8.dp)
                             .clickable {
-                                // Navegar ou realizar ação ao clicar no exercício
+                                navController.navigate("exerciseDetails/${exercise.id}")
                             },
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {

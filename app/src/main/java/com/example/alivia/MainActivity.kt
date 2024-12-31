@@ -20,10 +20,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.alivia.ui.components.BottomNavigationBar
 import com.example.alivia.ui.components.DrawerContent
 import com.example.alivia.ui.components.TopBar
+import com.example.alivia.ui.screens.ExerciseExampleScreen
 import com.example.alivia.ui.screens.FavoritesScreen
+import com.example.alivia.ui.screens.HelpAndSupportScreen
 import com.example.alivia.ui.screens.HomeScreen
-import com.example.alivia.ui.screens.TrainingDetailsScreen
+import com.example.alivia.ui.screens.ProfileScreen
 import com.example.alivia.ui.screens.SettingsScreen
+import com.example.alivia.ui.screens.TrainingDetailsScreen
 import com.example.alivia.ui.theme.AliviaTheme
 import kotlinx.coroutines.launch
 
@@ -41,14 +44,12 @@ class MainActivity : ComponentActivity() {
                     drawerState = drawerState,
                     gesturesEnabled = true,
                     drawerContent = {
-                        DrawerContent(navController) {}
+                        DrawerContent(navController = navController, drawerState = drawerState, scope = scope)
                     },
                     content = {
-
                         Scaffold(
                             topBar = {
                                 TopBar(
-//                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
                                     onOpenDrawer = { scope.launch { drawerState.open() } }
                                 )
                             },
@@ -68,14 +69,36 @@ class MainActivity : ComponentActivity() {
                                 composable("settings") {
                                     SettingsScreen(
                                         navController = navController,
-                                        onThemeToggle = { isDarkTheme.value = !isDarkTheme.value }, // Callback para alternar o tema
-                                        isDarkThemeEnabled = isDarkTheme.value
-                                    )}
+                                        onThemeToggle = {
+                                            isDarkTheme.value = !isDarkTheme.value
+                                        },
+                                        isDarkThemeEnabled = isDarkTheme.value,
+                                        context = LocalContext.current
+                                    )
+                                }
                                 composable("favorites") { FavoritesScreen(navController) }
                                 composable("trainingDetails/{eventId}") { backStackEntry ->
                                     val trainingId = backStackEntry.arguments?.getString("eventId")
                                     val context = LocalContext.current
-                                    TrainingDetailsScreen(trainingId = trainingId, context = context)
+                                    TrainingDetailsScreen(
+                                        trainingId = trainingId,
+                                        context = context,
+                                        navController = navController
+                                    )
+                                }
+                                composable("exerciseDetails/{exerciseId}") { backStackEntry ->
+                                    val exerciseId =
+                                        backStackEntry.arguments?.getString("exerciseId")
+                                    ExerciseExampleScreen(
+                                        exerciseId = exerciseId,
+                                        isNotificationsEnabled = true
+                                    )
+                                }
+                                composable("profile") {
+                                    ProfileScreen(navController)
+                                }
+                                composable("helpAndSupport") {
+                                    HelpAndSupportScreen(navController)
                                 }
                             }
                         }
@@ -85,5 +108,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
