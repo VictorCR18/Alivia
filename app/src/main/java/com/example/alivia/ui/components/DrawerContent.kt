@@ -1,5 +1,6 @@
 package com.example.alivia.ui.components
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -48,19 +49,26 @@ fun DrawerContent(navController: NavHostController, onSendNotification: () -> Un
 
             // Novo item para Notificação
             Text(
-                text = "Notificação",
+                text = "Configurações",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {}
+                    .clickable {
+                        navController.navigate("settings")
+                    }
                     .padding(vertical = 8.dp)
             )
-
 
             Text(
                 text = "Sair",
                 color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyLarge, // Estilo do texto
                 modifier = Modifier
-                    .clickable { /* Logout logic */ }
+                    .fillMaxWidth()
+                    .clickable {
+                        // Lógica para fechar o aplicativo activity?.finish()
+                        val activity = (navController.context as? Activity)
+                        activity?.finish()
+                    }
                     .padding(vertical = 8.dp)
             )
 

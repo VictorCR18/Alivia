@@ -59,7 +59,6 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-pager:0.31.5-beta")
     implementation ("com.google.accompanist:accompanist-pager-indicators:0.31.5-beta")
 
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -22,8 +22,8 @@ import com.example.alivia.ui.components.DrawerContent
 import com.example.alivia.ui.components.TopBar
 import com.example.alivia.ui.screens.FavoritesScreen
 import com.example.alivia.ui.screens.HomeScreen
-import com.example.alivia.ui.screens.SubscribedTrainingScreen
 import com.example.alivia.ui.screens.TrainingDetailsScreen
+import com.example.alivia.ui.screens.SettingsScreen
 import com.example.alivia.ui.theme.AliviaTheme
 import kotlinx.coroutines.launch
 
@@ -41,15 +41,14 @@ class MainActivity : ComponentActivity() {
                     drawerState = drawerState,
                     gesturesEnabled = true,
                     drawerContent = {
-                        DrawerContent(navController) {
-                        }
+                        DrawerContent(navController) {}
                     },
                     content = {
 
                         Scaffold(
                             topBar = {
                                 TopBar(
-                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
+//                                    onThemeToggle = { isDarkTheme.value = !isDarkTheme.value },
                                     onOpenDrawer = { scope.launch { drawerState.open() } }
                                 )
                             },
@@ -66,7 +65,12 @@ class MainActivity : ComponentActivity() {
                                         context = LocalContext.current
                                     )
                                 }
-                                composable("training") { SubscribedTrainingScreen(navController) }
+                                composable("settings") {
+                                    SettingsScreen(
+                                        navController = navController,
+                                        onThemeToggle = { isDarkTheme.value = !isDarkTheme.value }, // Callback para alternar o tema
+                                        isDarkThemeEnabled = isDarkTheme.value
+                                    )}
                                 composable("favorites") { FavoritesScreen(navController) }
                                 composable("trainingDetails/{eventId}") { backStackEntry ->
                                     val trainingId = backStackEntry.arguments?.getString("eventId")

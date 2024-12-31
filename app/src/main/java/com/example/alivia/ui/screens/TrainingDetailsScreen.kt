@@ -54,7 +54,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context) {
                     .fillMaxSize()
             )
 
-            // Gradiente de fundo
+            // Gradiente de fundotitleMedium
             Box(
                 modifier = Modifier
                     .matchParentSize()

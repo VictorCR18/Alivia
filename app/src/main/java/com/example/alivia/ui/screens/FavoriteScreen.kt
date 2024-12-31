@@ -2,9 +2,11 @@ package com.example.alivia.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,88 +22,89 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
-
 @Composable
 fun FavoritesScreen(navController: NavHostController) {
-    // Observa as mudanças no estado de favoritos dinamicamente
-    val favoriteTraining = stretchingSessions.filter { it.exercises.any { exercise -> exercise.isFavorite.value } }
+    // Filtra apenas os exercícios favoritos
+    val favoriteExercises = stretchingSessions
+        .flatMap { it.exercises } // Combina todas as listas de exercícios em uma única lista
+        .filter { it.isFavorite.value } // Filtra apenas os exercícios favoritos
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
     ) {
-        if (favoriteTraining.isEmpty()) {
+        if (favoriteExercises.isEmpty()) {
             item {
                 Text(
-                    text = "Você ainda não tem eventos favoritos.",
+                    text = "Você ainda não tem exercícios favoritos.",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(16.dp)
                 )
             }
         } else {
-            items(favoriteTraining) { training ->
+            items(favoriteExercises) { exercise ->
                 Card(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .clickable {
-                            navController.navigate("trainingDetails/${training.id}")
+                            // Navegar ou realizar ação ao clicar no exercício
                         },
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(96.dp)
                     ) {
-                        // Exibe a imagem do evento
-                        Image(
-                            painter = painterResource(id = training.imageRes),
-                            contentDescription = "Imagem do evento",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(80.dp)
-                                .padding(end = 16.dp)
-                        )
-
-                        // Exibe os detalhes do evento
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = training.title,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = training.description,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                text = training.description,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = training.description,
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 2 // Limita o texto a 2 linhas
-                            )
-                        }
-                        // Ícone de favorito
+                        // Ícone de favorito no canto superior direito
                         Icon(
-                            imageVector = if (training.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favorite",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(48.dp)
+                                .align(Alignment.TopEnd)
+                                .padding(12.dp) // Ajuste do espaçamento
                                 .clickable {
-                                    // Alterna o estado de favorito
-                                    training.isFavorite.value = !training.isFavorite.value
+                                    exercise.isFavorite.value = !exercise.isFavorite.value
                                 }
                         )
+                        // Layout com Row para alinhar a imagem à esquerda e o texto à direita
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            // Imagem do exercício à esquerda
+                            Image(
+                                painter = painterResource(id = exercise.imageRes),
+                                contentDescription = exercise.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(120.dp) // Ajusta o tamanho da imagem
+                                    .padding(8.dp) // Ajusta o espaçamento
+                                    .align(Alignment.CenterVertically)
+                            )
+
+                            // Conteúdo textual à direita
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .weight(1f) // Ocupa o restante do espaço
+                            ) {
+                                Text(
+                                    text = exercise.name,
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                Text(
+                                    text = exercise.duration,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
