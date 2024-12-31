@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -98,7 +99,6 @@ fun ProfileScreen(navController: NavHostController) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Editar Foto",
-                    tint = Color.White
                 )
             }
         }
@@ -107,9 +107,9 @@ fun ProfileScreen(navController: NavHostController) {
         TextField(
             value = userName,
             onValueChange = { userName = it },
-            label = { Text("Nome") },
+            label = { Text("Nome", color = Color(0xFF267A9C)) },
             modifier = Modifier.fillMaxWidth(),
-            maxLines = 1
+            maxLines = 1,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -120,9 +120,18 @@ fun ProfileScreen(navController: NavHostController) {
                 // Ação para salvar nome e imagem de perfil
                 Toast.makeText(context, "Perfil salvo!", Toast.LENGTH_SHORT).show()
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF267A9C),
+                contentColor = Color.White
+            )
         ) {
-            Text(text = "Salvar Alterações")
+            Text(
+                text = "Salvar Alterações",
+                modifier = Modifier.padding(horizontal = 16.dp) // Adiciona espaçamento interno ao texto
+            )
         }
     }
 }

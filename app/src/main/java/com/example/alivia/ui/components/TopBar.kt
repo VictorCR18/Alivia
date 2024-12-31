@@ -47,7 +47,6 @@ val customTextStyle = TextStyle(
 @ExperimentalMaterial3Api
 @Composable
 fun TopBar(
-//    onThemeToggle: () -> Unit,
     onOpenDrawer: () -> Unit
 ) {
     TopAppBar(
@@ -74,21 +73,12 @@ fun TopBar(
                 Spacer(modifier = Modifier.weight(1f)) // Empurra o ícone de menu para a direita
             }
         },
-//        navigationIcon = {
-//            IconButton(onClick = onOpenDrawer) { // Abrir o menu ao clicar no ícone
-//                Icon(Icons.Default.Menu, contentDescription = "Open Menu")
-//            }
-//        },
+
         actions = {
-//            IconButton(onClick = onThemeToggle) {
-//                Icon(
-//                    Icons.Default.BrightnessHigh, contentDescription = "Toggle Theme",
-//                )
-//            }
             IconButton(onClick = onOpenDrawer) {
                 Icon(
                     Icons.Default.Menu, contentDescription = "Open Menu",
-                    tint = Color(0xFF2BB5CD),
+                    tint = Color(0xFF267A9C),
                     modifier = Modifier.size(32.dp)
                 )
             }

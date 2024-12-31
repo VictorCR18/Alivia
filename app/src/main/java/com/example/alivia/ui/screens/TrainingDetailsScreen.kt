@@ -109,7 +109,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                             Icon(
                                 imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Favorite",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = Color(0xFF267A9C),
                                 modifier = Modifier
                                     .size(48.dp)
                                     .align(Alignment.TopEnd)
@@ -124,7 +124,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                                 Image(
                                     painter = painterResource(id = exercise.imageRes),
                                     contentDescription = exercise.name,
-                                    contentScale = ContentScale.Crop,
+                                    contentScale = ContentScale.Fit,
                                     modifier = Modifier
                                         .size(120.dp) // Ajusta o tamanho da imagem
                                         .padding(8.dp) // Ajusta o espaçamento

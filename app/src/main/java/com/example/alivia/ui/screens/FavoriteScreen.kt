@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,11 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
+
 @Composable
 fun FavoritesScreen(navController: NavHostController) {
     // Filtra apenas os exercícios favoritos
@@ -36,7 +37,9 @@ fun FavoritesScreen(navController: NavHostController) {
         .flatMap { it.exercises } // Combina todas as listas de exercícios em uma única lista
         .filter { it.isFavorite.value } // Filtra apenas os exercícios favoritos
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         if (favoriteExercises.isNotEmpty()) {
             // Botão para limpar favoritos
             Text(
@@ -47,7 +50,9 @@ fun FavoritesScreen(navController: NavHostController) {
                     .padding(bottom = 16.dp)
                     .clickable {
                         // Atualiza o estado para remover todos dos favoritos
-                        stretchingSessions.flatMap { it.exercises }.forEach { it.isFavorite.value = false }
+                        stretchingSessions
+                            .flatMap { it.exercises }
+                            .forEach { it.isFavorite.value = false }
                     }
             )
         }
@@ -80,7 +85,7 @@ fun FavoritesScreen(navController: NavHostController) {
                             Icon(
                                 imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Favorite",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = Color(0xFF267A9C),
                                 modifier = Modifier
                                     .size(48.dp)
                                     .align(Alignment.TopEnd)
@@ -95,7 +100,7 @@ fun FavoritesScreen(navController: NavHostController) {
                                 Image(
                                     painter = painterResource(id = exercise.imageRes),
                                     contentDescription = exercise.name,
-                                    contentScale = ContentScale.Crop,
+                                    contentScale = ContentScale.Fit,
                                     modifier = Modifier
                                         .size(120.dp) // Ajusta o tamanho da imagem
                                         .padding(8.dp) // Ajusta o espaçamento

@@ -21,7 +21,6 @@ data class StretchingSession(
     val bodyPart: BodyPart, // Parte do corpo a ser trabalhada
     val exercises: List<StretchingExercise>, // Lista de exercícios para o treino
     val isFavorite: MutableState<Boolean> = mutableStateOf(false),
-    val isSubscribed: MutableState<Boolean> = mutableStateOf(false),
     val imageRes: Int // Imagem do treino
 )
 
@@ -42,7 +41,7 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Isquiotibiais",
                 description = "Estique os músculos da parte de trás da coxa.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_isquiotibiais,
                 videoFileName = "videoplayback"
             ),
             StretchingExercise(
@@ -50,7 +49,7 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Quadríceps",
                 description = "Estique os músculos da parte frontal da coxa.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_quadriceps,
                 videoFileName = "videoplayback"
             ),
             StretchingExercise(
@@ -58,13 +57,12 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Panturrilha",
                 description = "Estique os músculos da panturrilha.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_panturrilha,
                 videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),
-        isSubscribed = mutableStateOf(false),
-        imageRes = R.drawable.img3
+        imageRes = R.drawable.alongamento_pernas
     ),
     StretchingSession(
         id = 2,
@@ -77,7 +75,7 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Bíceps",
                 description = "Estique os músculos do bíceps.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_biceps,
                 videoFileName = "videoplayback"
             ),
             StretchingExercise(
@@ -85,7 +83,7 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Tríceps",
                 description = "Estique os músculos do tríceps.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_triceps,
                 videoFileName = "videoplayback"
             ),
             StretchingExercise(
@@ -93,13 +91,12 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Ombros",
                 description = "Estique os músculos dos ombros.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_ombro,
                 videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),
-        isSubscribed = mutableStateOf(false),
-        imageRes = R.drawable.img3
+        imageRes = R.drawable.alongamento_bracos
     ),
     StretchingSession(
         id = 3,
@@ -112,7 +109,7 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Coluna",
                 description = "Estique a coluna, mantendo a postura correta.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_coluna,
                 videoFileName = "videoplayback"
             ),
             StretchingExercise(
@@ -120,7 +117,7 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Lombar",
                 description = "Estique os músculos da região lombar.",
                 duration = "30 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_lombar,
                 videoFileName = "videoplayback"
             ),
             StretchingExercise(
@@ -128,13 +125,12 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Trapézio",
                 description = "Alivie a tensão no trapézio.",
                 duration = "20 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_trapezio,
                 videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),
-        isSubscribed = mutableStateOf(false),
-        imageRes = R.drawable.img3
+        imageRes = R.drawable.alongamento_costas
     ),
     StretchingSession(
         id = 4,
@@ -147,12 +143,11 @@ val stretchingSessions = listOf(
                 name = "Alongamento de Corpo Inteiro",
                 description = "Alongue todos os principais grupos musculares.",
                 duration = "60 segundos",
-                imageRes = R.drawable.img3,
+                imageRes = R.drawable.alongamento_de_corpo,
                 videoFileName = "videoplayback"
             )
         ),
         isFavorite = mutableStateOf(false),
-        isSubscribed = mutableStateOf(false),
-        imageRes = R.drawable.img3
+        imageRes = R.drawable.alongamento_corpo
     )
 )

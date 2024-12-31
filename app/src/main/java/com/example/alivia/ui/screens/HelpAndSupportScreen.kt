@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -77,12 +78,12 @@ fun HelpAndSupportScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .height(56.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.surface,
+                    color = Color(0xFF267A9C),
                     shape = MaterialTheme.shapes.medium // Bordas arredondadas
                 )
                 .border(
                     width = 2.dp, // Espessura da borda
-                    color = MaterialTheme.colorScheme.primary, // Cor da borda
+                    color = Color(0xFF267A9C), // Cor da borda
                     shape = MaterialTheme.shapes.medium // Mesma forma para combinar com o fundo
                 )
                 .padding(horizontal = 8.dp),
@@ -90,7 +91,7 @@ fun HelpAndSupportScreen(navController: NavHostController) {
             if (message.isEmpty()) {
                 Text(
                     text = "Digite sua mensagem aqui...",
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    color = Color(0xFF267A9C).copy(alpha = 0.5f),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
@@ -123,7 +124,7 @@ fun HelpAndSupportScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = it,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF267A9C),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

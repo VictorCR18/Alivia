@@ -1,10 +1,6 @@
 package com.example.alivia.ui.screens
 
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,13 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import com.example.alivia.R
 import com.example.alivia.models.stretchingSessions
@@ -41,9 +36,9 @@ fun HomeScreen(navController: NavHostController, context: Context) {
     Column {
         // Usar o componente do carrossel
         val images = listOf(
-            R.drawable.img3,
-            R.drawable.img3,
-            R.drawable.img3
+            R.drawable.iniciante,
+            R.drawable.intermediario,
+            R.drawable.avancado
         )
         // Lista com os níveis correspondentes às imagens
         val levels = listOf("beginner", "intermediate", "advanced")
@@ -75,7 +70,7 @@ fun HomeScreen(navController: NavHostController, context: Context) {
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
-//                                .clip(CardDefaults.shape)
+                                .clip(CardDefaults.shape)
                         )
 
                         // Gradiente de fundo
