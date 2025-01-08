@@ -144,7 +144,7 @@ val stretchingSessions = listOf(
                 description = "Alongue todos os principais grupos musculares.",
                 duration = "60 segundos",
                 imageRes = R.drawable.alongamento_de_corpo,
-                videoFileName = "videoplayback"
+                videoFileName = "corpotodo"
             )
         ),
         isFavorite = mutableStateOf(false),
