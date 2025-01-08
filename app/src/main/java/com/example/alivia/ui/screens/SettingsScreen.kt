@@ -73,9 +73,6 @@ fun SettingsScreen(
                     // Ativar notificações
                     createNotificationChannel(context)
                     sendNotification(context, "Notificação ativada")
-                } else {
-                    // Desativar notificações
-                    sendNotification(context, "Notificação desativada")
                 }
             }
         )
