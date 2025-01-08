@@ -42,7 +42,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos da parte de trás da coxa.",
                 duration = "30 segundos",
                 imageRes = R.drawable.alongamento_de_isquiotibiais,
-                videoFileName = "videoplayback"
+                videoFileName = "isquiotibiais"
             ),
             StretchingExercise(
                 id = 2,
@@ -50,7 +50,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos da parte frontal da coxa.",
                 duration = "30 segundos",
                 imageRes = R.drawable.alongamento_de_quadriceps,
-                videoFileName = "videoplayback"
+                videoFileName = "quadriceps"
             ),
             StretchingExercise(
                 id = 3,
@@ -58,7 +58,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos da panturrilha.",
                 duration = "20 segundos",
                 imageRes = R.drawable.alongamento_de_panturrilha,
-                videoFileName = "videoplayback"
+                videoFileName = "panturrilha"
             )
         ),
         isFavorite = mutableStateOf(false),
@@ -76,7 +76,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos do bíceps.",
                 duration = "20 segundos",
                 imageRes = R.drawable.alongamento_de_biceps,
-                videoFileName = "videoplayback"
+                videoFileName = "biceps"
             ),
             StretchingExercise(
                 id = 5,
@@ -84,7 +84,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos do tríceps.",
                 duration = "20 segundos",
                 imageRes = R.drawable.alongamento_de_triceps,
-                videoFileName = "videoplayback"
+                videoFileName = "triceps"
             ),
             StretchingExercise(
                 id = 6,
@@ -92,7 +92,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos dos ombros.",
                 duration = "20 segundos",
                 imageRes = R.drawable.alongamento_de_ombro,
-                videoFileName = "videoplayback"
+                videoFileName = "ombro"
             )
         ),
         isFavorite = mutableStateOf(false),
@@ -106,11 +106,11 @@ val stretchingSessions = listOf(
         exercises = listOf(
             StretchingExercise(
                 id = 7,
-                name = "Alongamento de Coluna",
+                name = "Alongamento de Torax",
                 description = "Estique a coluna, mantendo a postura correta.",
                 duration = "30 segundos",
                 imageRes = R.drawable.alongamento_de_coluna,
-                videoFileName = "videoplayback"
+                videoFileName = "torax"
             ),
             StretchingExercise(
                 id = 8,
@@ -118,7 +118,7 @@ val stretchingSessions = listOf(
                 description = "Estique os músculos da região lombar.",
                 duration = "30 segundos",
                 imageRes = R.drawable.alongamento_de_lombar,
-                videoFileName = "videoplayback"
+                videoFileName = "lombar"
             ),
             StretchingExercise(
                 id = 9,
@@ -126,7 +126,7 @@ val stretchingSessions = listOf(
                 description = "Alivie a tensão no trapézio.",
                 duration = "20 segundos",
                 imageRes = R.drawable.alongamento_de_trapezio,
-                videoFileName = "videoplayback"
+                videoFileName = "trapezio"
             )
         ),
         isFavorite = mutableStateOf(false),
@@ -144,7 +144,7 @@ val stretchingSessions = listOf(
                 description = "Alongue todos os principais grupos musculares.",
                 duration = "60 segundos",
                 imageRes = R.drawable.alongamento_de_corpo,
-                videoFileName = "corpotodo"
+                videoFileName = "corpo"
             )
         ),
         isFavorite = mutableStateOf(false),

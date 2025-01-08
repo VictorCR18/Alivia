@@ -139,7 +139,7 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
             }
 
             // Exibindo o tempo restante do cronômetro com formatação mais bonita e centralizada
-            Box(
+            /* Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
@@ -150,7 +150,7 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.align(Alignment.Center)
                 )
-            }
+            } */
 
             // Botão de Iniciar/Pausar cronômetro
             Button(
