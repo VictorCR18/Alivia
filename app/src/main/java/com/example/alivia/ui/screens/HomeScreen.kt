@@ -45,7 +45,6 @@ fun HomeScreen(navController: NavHostController, context: Context) {
 
         ImageCarousel(imageList = images, levels = levels)
 
-// Seção principal com a lista de todos os eventos
         LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {
@@ -63,7 +62,6 @@ fun HomeScreen(navController: NavHostController, context: Context) {
                             .fillMaxWidth()
                             .height(160.dp)
                     ) {
-                        // Imagem do evento
                         Image(
                             painter = painterResource(id = training.imageRes),
                             contentDescription = training.title,

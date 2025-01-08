@@ -45,7 +45,6 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                 .fillMaxWidth()
                 .height(128.dp)
         ) {
-            // Imagem do evento
             Image(
                 painter = painterResource(id = training.imageRes),
                 contentDescription = training.title,
