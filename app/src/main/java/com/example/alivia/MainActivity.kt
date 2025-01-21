@@ -3,16 +3,23 @@ package com.example.alivia
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,12 +46,45 @@ class MainActivity : ComponentActivity() {
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
             val isDarkTheme = remember { mutableStateOf(false) }
+            val isLoading = remember { mutableStateOf(false) }
+            val delayTime = remember { mutableStateOf(500L) }
+
+            // Observa mudanças de navegação para ativar/desativar o spinner
+            LaunchedEffect(navController) {
+                var previousRoute: String? = null // Rota de origem
+
+                navController.addOnDestinationChangedListener { _, destination, _ ->
+                    val currentRoute = destination.route
+
+                    if (previousRoute?.startsWith("exerciseDetails") == true) {
+                        delayTime.value = 1000L
+//                    }else if(previousRoute?.startsWith("home") == true) {
+//                        delayTime.value = 0L
+                    } else {
+                        delayTime.value = 500L
+                    }
+
+                    previousRoute = currentRoute
+
+                    // Ativa o spinner e aplica o delay configurado
+                    isLoading.value = true
+                    scope.launch {
+                        kotlinx.coroutines.delay(delayTime.value)
+                        isLoading.value = false
+                    }
+                }
+            }
+
             AliviaTheme(darkTheme = isDarkTheme.value) {
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     gesturesEnabled = true,
                     drawerContent = {
-                        DrawerContent(navController = navController, drawerState = drawerState, scope = scope)
+                        DrawerContent(
+                            navController = navController,
+                            drawerState = drawerState,
+                            scope = scope
+                        )
                     },
                     content = {
                         Scaffold(
@@ -55,50 +95,67 @@ class MainActivity : ComponentActivity() {
                             },
                             bottomBar = { BottomNavigationBar(navController) }
                         ) { innerPadding ->
-                            NavHost(
-                                navController = navController,
-                                startDestination = "home",
-                                modifier = Modifier.padding(innerPadding)
-                            ) {
-                                composable("home") {
-                                    HomeScreen(
-                                        navController,
-                                        context = LocalContext.current
-                                    )
+                            // Conteúdo principal
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                // NavHost gerencia as rotas
+                                NavHost(
+                                    navController = navController,
+                                    startDestination = "home",
+                                    modifier = Modifier.padding(innerPadding)
+                                ) {
+                                    composable("home") {
+                                        HomeScreen(
+                                            navController,
+                                            context = LocalContext.current
+                                        )
+                                    }
+                                    composable("settings") {
+                                        SettingsScreen(
+                                            navController = navController,
+                                            onThemeToggle = {
+                                                isDarkTheme.value = !isDarkTheme.value
+                                            },
+                                            isDarkThemeEnabled = isDarkTheme.value,
+                                            context = LocalContext.current
+                                        )
+                                    }
+                                    composable("favorites") { FavoritesScreen(navController) }
+                                    composable("trainingDetails/{eventId}") { backStackEntry ->
+                                        val trainingId =
+                                            backStackEntry.arguments?.getString("eventId")
+                                        val context = LocalContext.current
+                                        TrainingDetailsScreen(
+                                            trainingId = trainingId,
+                                            context = context,
+                                            navController = navController
+                                        )
+                                    }
+                                    composable("exerciseDetails/{exerciseId}") { backStackEntry ->
+                                        val exerciseId =
+                                            backStackEntry.arguments?.getString("exerciseId")
+                                        ExerciseExampleScreen(
+                                            exerciseId = exerciseId,
+                                            isNotificationsEnabled = true
+                                        )
+                                    }
+                                    composable("profile") {
+                                        ProfileScreen(navController)
+                                    }
+                                    composable("helpAndSupport") {
+                                        HelpAndSupportScreen(navController)
+                                    }
                                 }
-                                composable("settings") {
-                                    SettingsScreen(
-                                        navController = navController,
-                                        onThemeToggle = {
-                                            isDarkTheme.value = !isDarkTheme.value
-                                        },
-                                        isDarkThemeEnabled = isDarkTheme.value,
-                                        context = LocalContext.current
-                                    )
-                                }
-                                composable("favorites") { FavoritesScreen(navController) }
-                                composable("trainingDetails/{eventId}") { backStackEntry ->
-                                    val trainingId = backStackEntry.arguments?.getString("eventId")
-                                    val context = LocalContext.current
-                                    TrainingDetailsScreen(
-                                        trainingId = trainingId,
-                                        context = context,
-                                        navController = navController
-                                    )
-                                }
-                                composable("exerciseDetails/{exerciseId}") { backStackEntry ->
-                                    val exerciseId =
-                                        backStackEntry.arguments?.getString("exerciseId")
-                                    ExerciseExampleScreen(
-                                        exerciseId = exerciseId,
-                                        isNotificationsEnabled = true
-                                    )
-                                }
-                                composable("profile") {
-                                    ProfileScreen(navController)
-                                }
-                                composable("helpAndSupport") {
-                                    HelpAndSupportScreen(navController)
+
+                                // Spinner de carregamento
+                                if (isLoading.value) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(Color(0xFFF5F8ff)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(color = Color(0xFF267A9C))
+                                    }
                                 }
                             }
                         }
