@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,33 +33,38 @@ import com.example.alivia.ui.components.sendNotification
 fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) {
     val context = LocalContext.current
 
-    // Encontra o exercício com base no ID fornecido
     val exercise = stretchingSessions
         .flatMap { it.exercises }
         .find { it.id.toString() == exerciseId }
 
-    // Estado para o tempo do cronômetro
-    var timeLeft by remember { mutableStateOf(30) }  // Exemplo: 30 segundos
+    var timeLeft by remember { mutableStateOf(30) }
     var isTimerRunning by remember { mutableStateOf(false) }
     var isPaused by remember { mutableStateOf(false) }
 
-    // Referência para o cronômetro
-    var countDownTimer by remember { mutableStateOf<CountDownTimer?>(null) }
-
-    // Estado para armazenar o VideoView
+    var videoDuration by remember { mutableStateOf(0) }
+    var currentProgress by remember { mutableStateOf(0) }
     var videoView: VideoView? by remember { mutableStateOf(null) }
 
-    // Função para enviar notificação quando o cronômetro acabar
+    LaunchedEffect(videoView) {
+        while (true) {
+            videoView?.let {
+                if (it.isPlaying) {
+                    currentProgress = it.currentPosition
+                }
+            }
+            kotlinx.coroutines.delay(500)
+        }
+    }
+
     fun onTimerComplete() {
         if (isNotificationsEnabled) {
             sendNotification(context, "O cronômetro chegou a zero!")
         }
     }
 
-    // Função para iniciar o cronômetro
     fun startTimer() {
         if (!isTimerRunning) {
-            countDownTimer = object : CountDownTimer(timeLeft * 1000L, 1000L) {
+            object : CountDownTimer(timeLeft * 1000L, 1000L) {
                 override fun onTick(millisUntilFinished: Long) {
                     timeLeft = (millisUntilFinished / 1000).toInt()
                 }
@@ -65,30 +72,23 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                 override fun onFinish() {
                     isTimerRunning = false
                     isPaused = false
-                    onTimerComplete()  // Chama a função de notificação quando o cronômetro chegar a 0
+                    onTimerComplete()
                 }
-            }.apply { start() }
-
+            }.start()
             isTimerRunning = true
             isPaused = false
         }
     }
 
-    // Função para pausar o cronômetro
     fun pauseTimer() {
-        countDownTimer?.cancel()
         isTimerRunning = false
         isPaused = true
     }
 
-    // Função para reiniciar o cronômetro e o vídeo
     fun resetTimer() {
-        countDownTimer?.cancel()
-        timeLeft = 30  // Resetando o tempo para 30 segundos
+        timeLeft = 30
         isTimerRunning = false
         isPaused = false
-
-        // Reinicia o vídeo
         videoView?.seekTo(0)
         videoView?.start()
     }
@@ -99,26 +99,24 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Título do exercício
             Text(
                 text = exercise.name,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            // Descrição do exercício
             Text(
                 text = exercise.description,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Exibindo o vídeo do exercício
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp)
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.BottomCenter
             ) {
                 AndroidView(
                     factory = { context ->
@@ -127,41 +125,60 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                             val videoUri =
                                 Uri.parse("android.resource://${context.packageName}/raw/${exercise.videoFileName}")
                             setVideoURI(videoUri)
-                            setOnPreparedListener {
-                                it.isLooping = true
-                                // Pausa ou inicia o vídeo dependendo do estado do cronômetro
-                                if (isTimerRunning) start() else pause()
+                            setOnPreparedListener { mediaPlayer ->
+                                videoDuration = mediaPlayer.duration
+                                mediaPlayer.isLooping = false
+                            }
+                            setOnCompletionListener {
+                                pauseTimer()
+                                it.pause()
                             }
                         }
                     },
                     modifier = Modifier.fillMaxSize()
                 )
+
+                // Barra de progresso sobreposta ao vídeo
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    LinearProgressIndicator(
+                        progress = if (videoDuration > -1) currentProgress / videoDuration.toFloat() else 0f,
+                        color = Color(0xFF267A9C),
+                        modifier = Modifier
+                            .fillMaxWidth(0.75f)
+                            .align(Alignment.CenterStart)
+                    )
+
+                    Text(
+                        text = String.format(
+                            "%02d:%02d / %02d:%02d",
+                            currentProgress / 60000,
+                            (currentProgress / 1000) % 60,
+                            videoDuration / 60000,
+                            (videoDuration / 1000) % 60
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
+                }
             }
 
-            // Exibindo o tempo restante do cronômetro com formatação mais bonita e centralizada
-            /* Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = String.format("%02d:%02d", timeLeft / 60, timeLeft % 60),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            } */
-
-            // Botão de Iniciar/Pausar cronômetro
             Button(
                 onClick = {
                     videoView?.let {
                         if (isTimerRunning) {
+                            videoView?.pause()
                             pauseTimer()
-                            it.pause()  // Pausa o vídeo quando o cronômetro é pausado
+                            it.pause()
                         } else {
+                            videoView?.start()
                             startTimer()
-                            it.start()  // Inicia o vídeo quando o cronômetro é iniciado
+                            it.start()
                         }
                     }
                 },
@@ -174,12 +191,9 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                     contentColor = Color.White
                 )
             ) {
-                Text(
-                    text = if (isTimerRunning) "Pausar Exercício" else "Iniciar Exercício"
-                )
+                Text(text = if (isTimerRunning) "Pausar Exercício" else "Iniciar Exercício")
             }
 
-            // Botão para reiniciar o cronômetro
             Button(
                 onClick = { resetTimer() },
                 modifier = Modifier
@@ -195,7 +209,6 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
             }
         }
     } ?: run {
-        // Exibe uma mensagem se o exercício não for encontrado
         Text(
             text = "Exercício não encontrado",
             modifier = Modifier
@@ -205,4 +218,3 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
         )
     }
 }
-
