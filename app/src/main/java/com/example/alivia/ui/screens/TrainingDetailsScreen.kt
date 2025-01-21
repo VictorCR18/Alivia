@@ -50,7 +50,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                 contentDescription = training.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()  // Isso faz a imagem preencher toda a largura da tela
+                    .fillMaxWidth()
                     .fillMaxSize()
             )
 

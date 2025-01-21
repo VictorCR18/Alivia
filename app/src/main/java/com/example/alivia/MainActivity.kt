@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
@@ -159,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .background(Color(0xFFF5F8ff)),
+                                            .background(MaterialTheme.colorScheme.background),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         CircularProgressIndicator(color = Color(0xFF267A9C))
