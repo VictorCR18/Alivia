@@ -9,30 +9,42 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     NavigationBar {
-        // Lista de itens com rotas, rótulos e ícones
         val items = listOf(
-            Triple("home", "Home", Icons.Default.Home, ),
+            Triple("home", "Home", Icons.Default.Home),
             Triple("favorites", "Favoritos", Icons.Default.Favorite)
         )
+
+        // Obtém a rota atual
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
+
         items.forEach { (route, label, icon) ->
             NavigationBarItem(
                 icon = {
                     Icon(
                         icon,
                         contentDescription = label,
-                        tint = Color(0xFF267A9C),
-                        )
-                }, // Ícone específico para cada item
+                        tint = Color(0xFF267A9C)
+                    )
+                },
                 label = { Text(label) },
-                selected = false, // Atualize a lógica de seleção, se necessário
-                onClick = { navController.navigate(route) }
+                selected = currentRoute == route,
+                onClick = {
+                    if (currentRoute != route) {
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = false // Não remove a rota inicial do grafo
+                            }
+                            launchSingleTop = true // Evita criar múltiplas instâncias da mesma rota
+                        }
+                    }
+                }
             )
         }
     }
 }
-

@@ -49,21 +49,28 @@ class MainActivity : ComponentActivity() {
             val isLoading = remember { mutableStateOf(false) }
             val delayTime = remember { mutableStateOf(500L) }
 
-            // Observa mudanças de navegação para ativar/desativar o spinner
+            // Navegação para ativar/desativar o spinner
             LaunchedEffect(navController) {
                 var previousRoute: String? = null // Rota de origem
 
                 navController.addOnDestinationChangedListener { _, destination, _ ->
                     val currentRoute = destination.route
 
-                    if (previousRoute?.startsWith("exerciseDetails") == true) {
-                        delayTime.value = 1000L
-//                    }else if(previousRoute?.startsWith("home") == true) {
-//                        delayTime.value = 0L
-                    } else {
-                        delayTime.value = 500L
+                    // Verifica se a navegação é para a mesma rota
+                    if (previousRoute == currentRoute) {
+                        isLoading.value = false // Não ativa o spinner
+                        return@addOnDestinationChangedListener
                     }
 
+                    // Configura o tempo de delay com base na rota de origem
+                    delayTime.value = when {
+                        previousRoute?.startsWith("exerciseDetails") == true -> 1000L // Delay maior ao sair do vídeo
+                        previousRoute?.startsWith("home") == true -> 0L // Sem delay ao sair de home
+                        previousRoute?.startsWith("favorites") == true -> 0L
+                        else -> 500L // Delay padrão
+                    }
+
+                    // Atualiza a rota de origem
                     previousRoute = currentRoute
 
                     // Ativa o spinner e aplica o delay configurado
@@ -74,6 +81,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+
 
             AliviaTheme(darkTheme = isDarkTheme.value) {
                 ModalNavigationDrawer(
