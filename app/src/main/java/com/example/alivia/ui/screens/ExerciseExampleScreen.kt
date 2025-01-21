@@ -1,7 +1,6 @@
 package com.example.alivia.ui.screens
 
 import android.net.Uri
-import android.os.CountDownTimer
 import android.widget.VideoView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,12 +36,11 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
         .flatMap { it.exercises }
         .find { it.id.toString() == exerciseId }
 
-    var timeLeft by remember { mutableStateOf(30) }
     var isTimerRunning by remember { mutableStateOf(false) }
     var isPaused by remember { mutableStateOf(false) }
-
     var videoDuration by remember { mutableStateOf(0) }
     var currentProgress by remember { mutableStateOf(0) }
+
     var videoView: VideoView? by remember { mutableStateOf(null) }
 
     LaunchedEffect(videoView) {
@@ -52,45 +50,44 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                     currentProgress = it.currentPosition
                 }
             }
-            kotlinx.coroutines.delay(500)
+            kotlinx.coroutines.delay(40)
         }
     }
 
     fun onTimerComplete() {
         if (isNotificationsEnabled) {
-            sendNotification(context, "O cronômetro chegou a zero!")
+            sendNotification(context, "O exercicio terminou!")
         }
     }
 
     fun startTimer() {
-        if (!isTimerRunning) {
-            object : CountDownTimer(timeLeft * 1000L, 1000L) {
-                override fun onTick(millisUntilFinished: Long) {
-                    timeLeft = (millisUntilFinished / 1000).toInt()
-                }
-
-                override fun onFinish() {
-                    isTimerRunning = false
-                    isPaused = false
-                    onTimerComplete()
-                }
-            }.start()
-            isTimerRunning = true
-            isPaused = false
+        videoView?.let {
+            if (!isTimerRunning) {
+                it.start()
+                isTimerRunning = true
+                isPaused = false
+            }
         }
     }
 
     fun pauseTimer() {
-        isTimerRunning = false
-        isPaused = true
+        videoView?.let {
+            it.pause()
+            isTimerRunning = false
+            isPaused = true
+        }
     }
 
     fun resetTimer() {
-        timeLeft = 30
-        isTimerRunning = false
-        isPaused = false
-        videoView?.seekTo(0)
-        videoView?.start()
+        videoView?.let {
+            it.pause()
+            it.seekTo(0)
+            currentProgress = 0
+            isTimerRunning = false
+            isPaused = false
+            it.start()
+            startTimer()
+        }
     }
 
     exercise?.let {
@@ -132,13 +129,13 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                             setOnCompletionListener {
                                 pauseTimer()
                                 it.pause()
+                                onTimerComplete()
                             }
                         }
                     },
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Barra de progresso sobreposta ao vídeo
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
