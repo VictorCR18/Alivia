@@ -119,7 +119,14 @@ fun HelpAndSupportScreen(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF267A9C),
                 contentColor = Color.White
-            )        ) {
+            ),
+            elevation = ButtonDefaults.elevatedButtonElevation(
+                defaultElevation = 8.dp,    // Elevação padrão
+                pressedElevation = 16.dp,  // Elevação ao pressionar o botão
+                focusedElevation = 12.dp,  // Elevação ao focar no botão
+                hoveredElevation = 10.dp   // Elevação ao passar o mouse (desktop)
+            ),
+        ) {
             Text(text = "Enviar Mensagem")
         }
 

@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,10 +32,11 @@ fun SettingsScreen(
     navController: NavHostController,
     onThemeToggle: () -> Unit, // Callback para alternar tema
     isDarkThemeEnabled: Boolean, // Estado atual do tema
-    context: Context // Contexto para enviar notificações
+    context: Context, // Contexto para enviar notificações
+    settingsViewModel: SettingsViewModel // Recebe o ViewModel
 ) {
     // Estado para notificações
-    val isNotificationsEnabled = remember { mutableStateOf(false) }
+    val isNotificationsEnabled = settingsViewModel.isNotificationsEnabled.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
 
@@ -67,12 +69,11 @@ fun SettingsScreen(
             title = "Notificações",
             description = "Ativar/desativar notificações do aplicativo",
             isChecked = isNotificationsEnabled.value,
-            onCheckedChange = {
-                isNotificationsEnabled.value = it
-                if (it) {
-                    // Ativar notificações
+            onCheckedChange = { enabled ->
+                settingsViewModel.setNotificationsEnabled(enabled) // Atualiza o estado
+                if (enabled) {
                     createNotificationChannel(context)
-                    sendNotification(context, "Notificação ativada")
+                    sendNotification(context, "Notificações ativadas!")
                 }
             }
         )

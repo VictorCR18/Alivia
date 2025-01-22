@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,8 +30,12 @@ import com.example.alivia.models.stretchingSessions
 import com.example.alivia.ui.components.sendNotification
 
 @Composable
-fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) {
+fun ExerciseExampleScreen(
+    exerciseId: String?,
+    settingsViewModel: SettingsViewModel,
+) {
     val context = LocalContext.current
+    val isNotificationsEnabled = settingsViewModel.isNotificationsEnabled.collectAsState()
 
     val exercise = stretchingSessions
         .flatMap { it.exercises }
@@ -55,7 +60,7 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
     }
 
     fun onTimerComplete() {
-        if (isNotificationsEnabled) {
+        if (isNotificationsEnabled.value) {
             sendNotification(context, "O exercicio terminou!")
         }
     }
@@ -185,8 +190,14 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                     .align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF267A9C),
-                    contentColor = Color.White
-                )
+                    contentColor = Color.White,
+                ),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 8.dp,    // Elevação padrão
+                    pressedElevation = 16.dp,  // Elevação ao pressionar o botão
+                    focusedElevation = 12.dp,  // Elevação ao focar no botão
+                    hoveredElevation = 10.dp   // Elevação ao passar o mouse (desktop)
+                ),
             ) {
                 Text(text = if (isTimerRunning) "Pausar Exercício" else "Iniciar Exercício")
             }
@@ -200,7 +211,13 @@ fun ExerciseExampleScreen(exerciseId: String?, isNotificationsEnabled: Boolean) 
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF267A9C),
                     contentColor = Color.White
-                )
+                ),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 8.dp,    // Elevação padrão
+                    pressedElevation = 16.dp,  // Elevação ao pressionar o botão
+                    focusedElevation = 12.dp,  // Elevação ao focar no botão
+                    hoveredElevation = 10.dp   // Elevação ao passar o mouse (desktop)
+                ),
             ) {
                 Text(text = "Reiniciar")
             }

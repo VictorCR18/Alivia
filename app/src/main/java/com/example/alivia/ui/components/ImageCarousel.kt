@@ -1,5 +1,6 @@
 package com.example.alivia.ui.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -20,10 +22,23 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.delay
 
 @Composable
 fun ImageCarousel(imageList: List<Int>, levels: List<String>) {
     val pagerState = rememberPagerState()
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000) // 3 segundos entre as transições
+            val nextPage =
+                if (pagerState.currentPage == imageList.size - 1) 0 else pagerState.currentPage + 1
+            pagerState.animateScrollToPage(
+                page = nextPage,
+                animationSpec = tween(4000)
+            )
+        }
+    }
 
     Column {
         // Carrossel

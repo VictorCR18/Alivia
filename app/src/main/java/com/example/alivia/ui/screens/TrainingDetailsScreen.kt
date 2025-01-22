@@ -1,6 +1,8 @@
 package com.example.alivia.ui.screens
 
 import android.content.Context
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +26,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -54,7 +59,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                     .fillMaxSize()
             )
 
-            // Gradiente de fundotitleMedium
+            // Gradiente de fundo
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -86,7 +91,6 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
         }
 
         Column(modifier = Modifier.padding(16.dp)) {
-
             Spacer(modifier = Modifier.height(140.dp))
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
@@ -104,19 +108,41 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                                 .fillMaxWidth()
                                 .height(96.dp)
                         ) {
-                            // Ícone de favorito no canto superior direito
+                            // Ícone de favorito no canto superior direito com animação
+                            val scale = remember { Animatable(1f) }
+
+                            // Gerencia o clique com um estado
+                            val isClicked = remember { mutableStateOf(false) }
+
+                            // Dispara a animação no escopo correto
+                            LaunchedEffect(isClicked.value) {
+                                if (isClicked.value) {
+                                    scale.animateTo(
+                                        targetValue = 1.1f,
+                                        animationSpec = tween(150) // Cresce
+                                    )
+                                    scale.animateTo(
+                                        targetValue = 1f,
+                                        animationSpec = tween(150) // Retorna ao tamanho original
+                                    )
+                                    isClicked.value = false // Reseta o clique
+                                }
+                            }
+
                             Icon(
                                 imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Favorite",
                                 tint = Color(0xFF267A9C),
                                 modifier = Modifier
-                                    .size(48.dp)
+                                    .size(48.dp * scale.value) // Aplica o tamanho animado
                                     .align(Alignment.TopEnd)
-                                    .padding(12.dp) // Ajuste do espaçamento
+                                    .padding(12.dp)
                                     .clickable {
                                         exercise.isFavorite.value = !exercise.isFavorite.value
+                                        isClicked.value = true // Ativa o clique para disparar a animação
                                     }
                             )
+
                             // Layout com Row para alinhar a imagem à esquerda e o texto à direita
                             Row(modifier = Modifier.fillMaxSize()) {
                                 // Imagem do exercício à esquerda
@@ -125,8 +151,8 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                                     contentDescription = exercise.name,
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier
-                                        .size(120.dp) // Ajusta o tamanho da imagem
-                                        .padding(8.dp) // Ajusta o espaçamento
+                                        .size(120.dp)
+                                        .padding(8.dp)
                                         .align(Alignment.CenterVertically)
                                 )
 
@@ -134,7 +160,7 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                                 Column(
                                     modifier = Modifier
                                         .padding(16.dp)
-                                        .weight(1f) // Ocupa o restante do espaço
+                                        .weight(1f)
                                 ) {
                                     Text(
                                         text = exercise.name,

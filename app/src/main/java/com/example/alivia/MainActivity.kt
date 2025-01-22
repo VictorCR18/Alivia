@@ -3,6 +3,16 @@ package com.example.alivia
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,9 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.alivia.ui.components.BottomNavigationBar
 import com.example.alivia.ui.components.DrawerContent
 import com.example.alivia.ui.components.TopBar
@@ -40,6 +52,8 @@ import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
+    private val settingsViewModel: SettingsViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -112,46 +126,168 @@ class MainActivity : ComponentActivity() {
                                     startDestination = "home",
                                     modifier = Modifier.padding(innerPadding)
                                 ) {
-                                    composable("home") {
+                                    // Tela inicial com nenhuma animação de transição
+                                    composable(
+                                        "home",
+                                        enterTransition = { EnterTransition.None },
+                                        exitTransition = { ExitTransition.None }
+                                    ) {
                                         HomeScreen(
-                                            navController,
+                                            navController = navController,
                                             context = LocalContext.current
                                         )
                                     }
-                                    composable("settings") {
+
+                                    // Configuração com animações para outras telas
+                                    composable(
+                                        "settings",
+                                        enterTransition = {
+                                            fadeIn(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideIntoContainer(
+                                                animationSpec = tween(300, easing = EaseIn),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                                            )
+                                        },
+                                        exitTransition = {
+                                            fadeOut(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideOutOfContainer(
+                                                animationSpec = tween(300, easing = EaseOut),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                                            )
+                                        }
+                                    ) {
                                         SettingsScreen(
                                             navController = navController,
                                             onThemeToggle = {
                                                 isDarkTheme.value = !isDarkTheme.value
                                             },
                                             isDarkThemeEnabled = isDarkTheme.value,
-                                            context = LocalContext.current
+                                            context = LocalContext.current,
+                                            settingsViewModel = settingsViewModel // Passa o ViewModel
                                         )
                                     }
-                                    composable("favorites") { FavoritesScreen(navController) }
-                                    composable("trainingDetails/{eventId}") { backStackEntry ->
-                                        val trainingId =
-                                            backStackEntry.arguments?.getString("eventId")
-                                        val context = LocalContext.current
+
+                                    composable(
+                                        "favorites",
+                                        enterTransition = {
+                                            fadeIn(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideIntoContainer(
+                                                animationSpec = tween(300, easing = EaseIn),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                                            )
+                                        },
+                                        exitTransition = {
+                                            fadeOut(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideOutOfContainer(
+                                                animationSpec = tween(300, easing = EaseOut),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                                            )
+                                        }
+                                    ) {
+                                        FavoritesScreen(navController = navController)
+                                    }
+
+                                    composable(
+                                        "trainingDetails/{eventId}",
+                                        arguments = listOf(navArgument("eventId") { type = NavType.StringType }),
+                                        enterTransition = {
+                                            fadeIn(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideIntoContainer(
+                                                animationSpec = tween(300, easing = EaseIn),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                                            )
+                                        },
+                                        exitTransition = {
+                                            fadeOut(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideOutOfContainer(
+                                                animationSpec = tween(300, easing = EaseOut),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                                            )
+                                        }
+                                    ) { backStackEntry ->
+                                        val trainingId = backStackEntry.arguments?.getString("eventId")
                                         TrainingDetailsScreen(
                                             trainingId = trainingId,
-                                            context = context,
+                                            context = LocalContext.current,
                                             navController = navController
                                         )
                                     }
-                                    composable("exerciseDetails/{exerciseId}") { backStackEntry ->
-                                        val exerciseId =
-                                            backStackEntry.arguments?.getString("exerciseId")
+
+                                    composable(
+                                        "exerciseDetails/{exerciseId}",
+                                        arguments = listOf(navArgument("exerciseId") { type = NavType.StringType }),
+                                        enterTransition = {
+                                            fadeIn(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideIntoContainer(
+                                                animationSpec = tween(300, easing = EaseIn),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                                            )
+                                        },
+                                        exitTransition = {
+                                            fadeOut(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideOutOfContainer(
+                                                animationSpec = tween(300, easing = EaseOut),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                                            )
+                                        }
+                                    ) { backStackEntry ->
+                                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")
                                         ExerciseExampleScreen(
                                             exerciseId = exerciseId,
-                                            isNotificationsEnabled = true
+                                            settingsViewModel = settingsViewModel // Passa o ViewModel
                                         )
                                     }
-                                    composable("profile") {
-                                        ProfileScreen(navController)
+
+                                    composable(
+                                        "profile",
+                                        enterTransition = {
+                                            fadeIn(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideIntoContainer(
+                                                animationSpec = tween(300, easing = EaseIn),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                                            )
+                                        },
+                                        exitTransition = {
+                                            fadeOut(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideOutOfContainer(
+                                                animationSpec = tween(300, easing = EaseOut),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                                            )
+                                        }
+                                    ) {
+                                        ProfileScreen(navController = navController)
                                     }
-                                    composable("helpAndSupport") {
-                                        HelpAndSupportScreen(navController)
+
+                                    composable(
+                                        "helpAndSupport",
+                                        enterTransition = {
+                                            fadeIn(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideIntoContainer(
+                                                animationSpec = tween(300, easing = EaseIn),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                                            )
+                                        },
+                                        exitTransition = {
+                                            fadeOut(
+                                                animationSpec = tween(300, easing = LinearEasing)
+                                            ) + slideOutOfContainer(
+                                                animationSpec = tween(300, easing = EaseOut),
+                                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                                            )
+                                        }
+                                    ) {
+                                        HelpAndSupportScreen(navController = navController)
                                     }
                                 }
 
