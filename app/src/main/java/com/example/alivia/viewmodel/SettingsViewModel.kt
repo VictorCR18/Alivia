@@ -3,12 +3,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class SettingsViewModel : ViewModel() {
-    // Estado para controlar se as notificações estão habilitadas
     private val _isNotificationsEnabled = MutableStateFlow(false)
-    val isNotificationsEnabled: StateFlow<Boolean> = _isNotificationsEnabled
+    val isNotificationsEnabled: StateFlow<Boolean> get() = _isNotificationsEnabled
 
-    // Atualiza o estado
+    private val _areAnimationsEnabled = MutableStateFlow(true) // Estado inicial para animações
+    val areAnimationsEnabled: StateFlow<Boolean> get() = _areAnimationsEnabled
+
     fun setNotificationsEnabled(enabled: Boolean) {
         _isNotificationsEnabled.value = enabled
+    }
+
+    fun setAnimationsEnabled(enabled: Boolean) {
+        _areAnimationsEnabled.value = enabled
     }
 }

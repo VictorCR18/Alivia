@@ -165,7 +165,7 @@ class MainActivity : ComponentActivity() {
                                             },
                                             isDarkThemeEnabled = isDarkTheme.value,
                                             context = LocalContext.current,
-                                            settingsViewModel = settingsViewModel // Passa o ViewModel
+                                            settingsViewModel = settingsViewModel
                                         )
                                     }
 
@@ -215,7 +215,8 @@ class MainActivity : ComponentActivity() {
                                         TrainingDetailsScreen(
                                             trainingId = trainingId,
                                             context = LocalContext.current,
-                                            navController = navController
+                                            navController = navController,
+                                            settingsViewModel = settingsViewModel
                                         )
                                     }
 

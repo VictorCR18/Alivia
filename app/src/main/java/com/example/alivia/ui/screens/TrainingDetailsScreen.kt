@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,7 +41,14 @@ import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
 
 @Composable
-fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: NavHostController) {
+fun TrainingDetailsScreen(
+    trainingId: String?,
+    settingsViewModel: SettingsViewModel,
+    context: Context,
+    navController: NavHostController,
+) {
+    val areAnimationsEnabled = settingsViewModel.areAnimationsEnabled.collectAsState()
+
     val training =
         stretchingSessions.find { it.id.toString() == trainingId } // Usando a lista atualizada
     training?.let {
@@ -111,66 +119,110 @@ fun TrainingDetailsScreen(trainingId: String?, context: Context, navController: 
                             // Ícone de favorito no canto superior direito com animação
                             val scale = remember { Animatable(1f) }
 
-                            // Gerencia o clique com um estado
-                            val isClicked = remember { mutableStateOf(false) }
+                            if (areAnimationsEnabled.value) {
+                                // Lógica para animações habilitadas
+                                val isClicked = remember { mutableStateOf(false) }
 
-                            // Dispara a animação no escopo correto
-                            LaunchedEffect(isClicked.value) {
-                                if (isClicked.value) {
-                                    scale.animateTo(
-                                        targetValue = 1.1f,
-                                        animationSpec = tween(150) // Cresce
-                                    )
-                                    scale.animateTo(
-                                        targetValue = 1f,
-                                        animationSpec = tween(150) // Retorna ao tamanho original
-                                    )
-                                    isClicked.value = false // Reseta o clique
-                                }
-                            }
-
-                            Icon(
-                                imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite",
-                                tint = Color(0xFF267A9C),
-                                modifier = Modifier
-                                    .size(48.dp * scale.value) // Aplica o tamanho animado
-                                    .align(Alignment.TopEnd)
-                                    .padding(12.dp)
-                                    .clickable {
-                                        exercise.isFavorite.value = !exercise.isFavorite.value
-                                        isClicked.value = true // Ativa o clique para disparar a animação
+                                LaunchedEffect(isClicked.value) {
+                                    if (isClicked.value) {
+                                        scale.animateTo(
+                                            targetValue = 1.1f,
+                                            animationSpec = tween(150) // Cresce
+                                        )
+                                        scale.animateTo(
+                                            targetValue = 1f,
+                                            animationSpec = tween(150) // Retorna ao tamanho original
+                                        )
+                                        isClicked.value = false // Reseta o clique
                                     }
-                            )
+                                }
 
-                            // Layout com Row para alinhar a imagem à esquerda e o texto à direita
-                            Row(modifier = Modifier.fillMaxSize()) {
-                                // Imagem do exercício à esquerda
-                                Image(
-                                    painter = painterResource(id = exercise.imageRes),
-                                    contentDescription = exercise.name,
-                                    contentScale = ContentScale.Fit,
+                                Icon(
+                                    imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favorite",
+                                    tint = Color(0xFF267A9C),
                                     modifier = Modifier
-                                        .size(120.dp)
-                                        .padding(8.dp)
-                                        .align(Alignment.CenterVertically)
+                                        .size(48.dp * scale.value) // Aplica o tamanho animado
+                                        .align(Alignment.TopEnd)
+                                        .padding(12.dp)
+                                        .clickable {
+                                            exercise.isFavorite.value = !exercise.isFavorite.value
+                                            isClicked.value = true // Ativa o clique para disparar a animação
+                                        }
                                 )
+                                // Layout com Row para alinhar a imagem à esquerda e o texto à direita
+                                Row(modifier = Modifier.fillMaxSize()) {
+                                    // Imagem do exercício à esquerda
+                                    Image(
+                                        painter = painterResource(id = exercise.imageRes),
+                                        contentDescription = exercise.name,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(120.dp)
+                                            .padding(8.dp)
+                                            .align(Alignment.CenterVertically)
+                                    )
 
-                                // Conteúdo textual à direita
-                                Column(
+                                    // Conteúdo textual à direita
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .weight(1f)
+                                    ) {
+                                        Text(
+                                            text = exercise.name,
+                                            style = MaterialTheme.typography.titleSmall
+                                        )
+                                        Text(
+                                            text = exercise.duration,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            modifier = Modifier.padding(top = 4.dp)
+                                        )
+                                    }
+                                }
+                            } else {
+                                // Lógica para animações desabilitadas
+                                Icon(
+                                    imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favorite",
+                                    tint = Color(0xFF267A9C),
                                     modifier = Modifier
-                                        .padding(16.dp)
-                                        .weight(1f)
-                                ) {
-                                    Text(
-                                        text = exercise.name,
-                                        style = MaterialTheme.typography.titleSmall
+                                        .size(48.dp)
+                                        .align(Alignment.TopEnd)
+                                        .padding(12.dp)
+                                        .clickable {
+                                            exercise.isFavorite.value = !exercise.isFavorite.value
+                                        }
+                                )
+                                // Layout com Row para alinhar a imagem à esquerda e o texto à direita
+                                Row(modifier = Modifier.fillMaxSize()) {
+                                    // Imagem do exercício à esquerda
+                                    Image(
+                                        painter = painterResource(id = exercise.imageRes),
+                                        contentDescription = exercise.name,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(120.dp)
+                                            .padding(8.dp)
+                                            .align(Alignment.CenterVertically)
                                     )
-                                    Text(
-                                        text = exercise.duration,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    )
+
+                                    // Conteúdo textual à direita
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .weight(1f)
+                                    ) {
+                                        Text(
+                                            text = exercise.name,
+                                            style = MaterialTheme.typography.titleSmall
+                                        )
+                                        Text(
+                                            text = exercise.duration,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            modifier = Modifier.padding(top = 4.dp)
+                                        )
+                                    }
                                 }
                             }
                         }

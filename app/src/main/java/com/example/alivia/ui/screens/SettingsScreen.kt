@@ -37,9 +37,9 @@ fun SettingsScreen(
 ) {
     // Estado para notificações
     val isNotificationsEnabled = settingsViewModel.isNotificationsEnabled.collectAsState()
+    val areAnimationsEnabled = settingsViewModel.areAnimationsEnabled.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
-
         // Row para alinhar ícone e título na horizontal
         Row(
             modifier = Modifier
@@ -86,6 +86,15 @@ fun SettingsScreen(
             description = "Alternar entre tema claro e escuro",
             isChecked = isDarkThemeEnabled,
             onCheckedChange = { onThemeToggle() }
+        )
+
+        RowOption(
+            title = "Animações Visuais",
+            description = "Habilitar ou desabilitar animações visuais",
+            isChecked = areAnimationsEnabled.value,
+            onCheckedChange = { enabled ->
+                settingsViewModel.setAnimationsEnabled(enabled)
+            }
         )
     }
 }
