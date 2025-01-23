@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.alivia.models.stretchingSessions
 import com.example.alivia.ui.components.sendNotification
+import com.example.alivia.viewmodel.SettingsViewModel
 
 @Composable
 fun ExerciseExampleScreen(

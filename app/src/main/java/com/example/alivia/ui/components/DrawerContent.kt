@@ -17,12 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun DrawerContent(navController: NavHostController, drawerState: DrawerState, scope: CoroutineScope) {
+fun DrawerContent(
+    navController: NavHostController,
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+) {
     Surface(
         modifier = Modifier
             .fillMaxHeight()
@@ -47,7 +52,13 @@ fun DrawerContent(navController: NavHostController, drawerState: DrawerState, sc
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navController.navigate("profile")
+                        navController.navigate("profile") {
+                            // Remove entradas duplicadas da pilha
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true // Garante uma única instância da página
+                        }
                         // Fecha o drawer ao clicar
                         scope.launch { drawerState.close() }
                     }
@@ -59,8 +70,12 @@ fun DrawerContent(navController: NavHostController, drawerState: DrawerState, sc
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navController.navigate("settings")
-                        // Fecha o drawer ao clicar
+                        navController.navigate("settings") {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                         scope.launch { drawerState.close() }
                     }
                     .padding(vertical = 8.dp)
@@ -75,7 +90,6 @@ fun DrawerContent(navController: NavHostController, drawerState: DrawerState, sc
                     .clickable {
                         val activity = (navController.context as? Activity)
                         activity?.finish()
-                        // Fecha o drawer ao clicar
                         scope.launch { drawerState.close() }
                     }
                     .padding(vertical = 8.dp)
@@ -88,8 +102,12 @@ fun DrawerContent(navController: NavHostController, drawerState: DrawerState, sc
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navController.navigate("helpAndSupport")
-                        // Fecha o drawer ao clicar
+                        navController.navigate("helpAndSupport") {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                         scope.launch { drawerState.close() }
                     }
                     .padding(vertical = 8.dp)

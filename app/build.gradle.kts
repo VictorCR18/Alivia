@@ -40,6 +40,13 @@ android {
 }
 
 dependencies {
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.compose.animation:animation:1.5.4")
+
     implementation("androidx.compose.ui:ui-text-google-fonts:1.3.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.compose.ui:ui:1.5.3")
@@ -61,7 +68,7 @@ dependencies {
 
     //Perfil
     implementation("io.coil-kt:coil-compose:2.4.0") // para Jetpack Compose
-    implementation("io.coil-kt:coil:2.4.0") // Dependência principal do Coil (caso queira usar em outras partes da app)
+    implementation("io.coil-kt:coil:2.4.0") // Dependência principal do Coil
 
 
     implementation(libs.androidx.core.ktx)

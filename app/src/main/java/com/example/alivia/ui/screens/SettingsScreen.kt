@@ -17,8 +17,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,18 +24,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.alivia.ui.components.createNotificationChannel
 import com.example.alivia.ui.components.sendNotification
+import com.example.alivia.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
     onThemeToggle: () -> Unit, // Callback para alternar tema
-    isDarkThemeEnabled: Boolean, // Estado atual do tema
+    settingsViewModel: SettingsViewModel,
     context: Context, // Contexto para enviar notificações
-    settingsViewModel: SettingsViewModel // Recebe o ViewModel
 ) {
     // Estado para notificações
     val isNotificationsEnabled = settingsViewModel.isNotificationsEnabled.collectAsState()
     val areAnimationsEnabled = settingsViewModel.areAnimationsEnabled.collectAsState()
+    val isDarkTheme = settingsViewModel.isDarkModeEnabled.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
         // Row para alinhar ícone e título na horizontal
@@ -84,7 +83,7 @@ fun SettingsScreen(
         RowOption(
             title = "Tema Escuro",
             description = "Alternar entre tema claro e escuro",
-            isChecked = isDarkThemeEnabled,
+            isChecked = isDarkTheme.value, // Recebe o estado atual do tema
             onCheckedChange = { onThemeToggle() }
         )
 
@@ -104,7 +103,7 @@ fun RowOption(
     title: String,
     description: String,
     isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -136,4 +135,3 @@ fun RowOption(
         }
     }
 }
-

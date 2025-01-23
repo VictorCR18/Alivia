@@ -25,6 +25,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,11 +49,16 @@ import com.example.alivia.ui.screens.ProfileScreen
 import com.example.alivia.ui.screens.SettingsScreen
 import com.example.alivia.ui.screens.TrainingDetailsScreen
 import com.example.alivia.ui.theme.AliviaTheme
+import com.example.alivia.viewmodel.SettingsViewModel
+import com.example.alivia.viewmodel.SettingsViewModelFactory
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
-    private val settingsViewModel: SettingsViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +66,11 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            val isDarkTheme = remember { mutableStateOf(false) }
             val isLoading = remember { mutableStateOf(false) }
             val delayTime = remember { mutableStateOf(500L) }
+
+            // Observa o estado do tema diretamente do ViewModel
+            val isDarkTheme = settingsViewModel.isDarkModeEnabled.collectAsState(initial = false)
 
             // Navegação para ativar/desativar o spinner
             LaunchedEffect(navController) {
@@ -81,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     delayTime.value = when {
                         previousRoute?.startsWith("exerciseDetails") == true -> 1000L // Delay maior ao sair do vídeo
                         previousRoute?.startsWith("home") == true -> 0L // Sem delay ao sair de home
-                        previousRoute?.startsWith("favorites") == true -> 0L
+                        previousRoute?.startsWith("favorites") == true -> 300L
                         else -> 500L // Delay padrão
                     }
 
@@ -91,12 +99,11 @@ class MainActivity : ComponentActivity() {
                     // Ativa o spinner e aplica o delay configurado
                     isLoading.value = true
                     scope.launch {
-                        kotlinx.coroutines.delay(delayTime.value)
+                        delay(delayTime.value)
                         isLoading.value = false
                     }
                 }
             }
-
 
             AliviaTheme(darkTheme = isDarkTheme.value) {
                 ModalNavigationDrawer(
@@ -161,11 +168,10 @@ class MainActivity : ComponentActivity() {
                                         SettingsScreen(
                                             navController = navController,
                                             onThemeToggle = {
-                                                isDarkTheme.value = !isDarkTheme.value
+                                                settingsViewModel.setDarkModeEnabled(!isDarkTheme.value)
                                             },
-                                            isDarkThemeEnabled = isDarkTheme.value,
-                                            context = LocalContext.current,
-                                            settingsViewModel = settingsViewModel
+                                            settingsViewModel = settingsViewModel,
+                                            context = LocalContext.current
                                         )
                                     }
 
@@ -193,7 +199,9 @@ class MainActivity : ComponentActivity() {
 
                                     composable(
                                         "trainingDetails/{eventId}",
-                                        arguments = listOf(navArgument("eventId") { type = NavType.StringType }),
+                                        arguments = listOf(navArgument("eventId") {
+                                            type = NavType.StringType
+                                        }),
                                         enterTransition = {
                                             fadeIn(
                                                 animationSpec = tween(300, easing = LinearEasing)
@@ -211,10 +219,10 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     ) { backStackEntry ->
-                                        val trainingId = backStackEntry.arguments?.getString("eventId")
+                                        val trainingId =
+                                            backStackEntry.arguments?.getString("eventId")
                                         TrainingDetailsScreen(
                                             trainingId = trainingId,
-                                            context = LocalContext.current,
                                             navController = navController,
                                             settingsViewModel = settingsViewModel
                                         )
@@ -222,7 +230,9 @@ class MainActivity : ComponentActivity() {
 
                                     composable(
                                         "exerciseDetails/{exerciseId}",
-                                        arguments = listOf(navArgument("exerciseId") { type = NavType.StringType }),
+                                        arguments = listOf(navArgument("exerciseId") {
+                                            type = NavType.StringType
+                                        }),
                                         enterTransition = {
                                             fadeIn(
                                                 animationSpec = tween(300, easing = LinearEasing)
@@ -240,7 +250,8 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     ) { backStackEntry ->
-                                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")
+                                        val exerciseId =
+                                            backStackEntry.arguments?.getString("exerciseId")
                                         ExerciseExampleScreen(
                                             exerciseId = exerciseId,
                                             settingsViewModel = settingsViewModel // Passa o ViewModel

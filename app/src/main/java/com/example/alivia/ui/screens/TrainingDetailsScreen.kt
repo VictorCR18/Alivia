@@ -1,6 +1,5 @@
 package com.example.alivia.ui.screens
 
-import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -39,12 +38,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
+import com.example.alivia.viewmodel.SettingsViewModel
 
 @Composable
 fun TrainingDetailsScreen(
     trainingId: String?,
     settingsViewModel: SettingsViewModel,
-    context: Context,
     navController: NavHostController,
 ) {
     val areAnimationsEnabled = settingsViewModel.areAnimationsEnabled.collectAsState()
@@ -147,7 +146,8 @@ fun TrainingDetailsScreen(
                                         .padding(12.dp)
                                         .clickable {
                                             exercise.isFavorite.value = !exercise.isFavorite.value
-                                            isClicked.value = true // Ativa o clique para disparar a animação
+                                            isClicked.value =
+                                                true // Ativa o clique para disparar a animação
                                         }
                                 )
                                 // Layout com Row para alinhar a imagem à esquerda e o texto à direita
