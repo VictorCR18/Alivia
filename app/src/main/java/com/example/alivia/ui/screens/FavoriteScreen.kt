@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,18 +30,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
+import com.example.alivia.viewmodel.SettingsViewModel
 
 @Composable
-fun FavoritesScreen(navController: NavHostController) {
-    // Filtra apenas os exercícios favoritos
-    val favoriteExercises = stretchingSessions
-        .flatMap { it.exercises } // Combina todas as listas de exercícios em uma única lista
-        .filter { it.isFavorite.value } // Filtra apenas os exercícios favoritos
+fun FavoritesScreen(
+    navController: NavHostController,
+    settingsViewModel: SettingsViewModel,
+) {
+// Observa os exercícios favoritos persistidos no DataStore
+    val favoriteExercises = settingsViewModel.favoriteExercises.collectAsState()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-        if (favoriteExercises.isNotEmpty()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        if (favoriteExercises.value.isNotEmpty()) {
             // Botão para limpar favoritos
             Text(
                 text = "Limpar Favoritos",
@@ -48,17 +53,12 @@ fun FavoritesScreen(navController: NavHostController) {
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
-                    .clickable {
-                        // Atualiza o estado para remover todos dos favoritos
-                        stretchingSessions
-                            .flatMap { it.exercises }
-                            .forEach { it.isFavorite.value = false }
-                    }
+                    .clickable { settingsViewModel.clearFavoriteExercises() }
             )
         }
 
         LazyColumn {
-            if (favoriteExercises.isEmpty()) {
+            if (favoriteExercises.value.isEmpty()) {
                 item {
                     Text(
                         text = "Você ainda não tem exercícios favoritos.",
@@ -67,61 +67,74 @@ fun FavoritesScreen(navController: NavHostController) {
                     )
                 }
             } else {
-                items(favoriteExercises) { exercise ->
-                    Card(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .clickable {
-                                navController.navigate("exerciseDetails/${exercise.id}")
-                            },
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(96.dp)
-                        ) {
-                            // Ícone de favorito no canto superior direito
-                            Icon(
-                                imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite",
-                                tint = Color(0xFF267A9C),
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .align(Alignment.TopEnd)
-                                    .padding(12.dp) // Ajuste do espaçamento
-                                    .clickable {
-                                        exercise.isFavorite.value = !exercise.isFavorite.value
-                                    }
-                            )
-                            // Layout com Row para alinhar a imagem à esquerda e o texto à direita
-                            Row(modifier = Modifier.fillMaxSize()) {
-                                // Imagem do exercício à esquerda
-                                Image(
-                                    painter = painterResource(id = exercise.imageRes),
-                                    contentDescription = exercise.name,
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .size(120.dp) // Ajusta o tamanho da imagem
-                                        .padding(8.dp) // Ajusta o espaçamento
-                                        .align(Alignment.CenterVertically)
-                                )
+                items(favoriteExercises.value.toList()) { exerciseId ->
+                    val exercise = stretchingSessions
+                        .flatMap { it.exercises }
+                        .find { it.id.toString() == exerciseId }
 
-                                // Conteúdo textual à direita
-                                Column(
+                    exercise?.let {
+                        Card(
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .clickable {
+                                    navController.navigate("exerciseDetails/${exercise.id}")
+                                },
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(96.dp)
+                            ) {
+                                // Verifica se o exercício está na lista de favoritos persistida
+                                val isFavorite = favoriteExercises.value.contains(exercise.id.toString())
+
+                                // Ícone de favorito no canto superior direito
+                                Icon(
+                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favorite",
+                                    tint = Color(0xFF267A9C),
                                     modifier = Modifier
-                                        .padding(16.dp)
-                                        .weight(1f) // Ocupa o restante do espaço
-                                ) {
-                                    Text(
-                                        text = exercise.name,
-                                        style = MaterialTheme.typography.titleSmall
+                                        .size(48.dp)
+                                        .align(Alignment.TopEnd)
+                                        .padding(12.dp) // Ajuste do espaçamento
+                                        .clickable {
+                                            if (isFavorite) {
+                                                settingsViewModel.removeFavoriteExercise(exercise.id.toString())
+                                            } else {
+                                                settingsViewModel.addFavoriteExercise(exercise.id.toString())
+                                            }
+                                        }
+                                )
+                                // Layout com Row para alinhar a imagem à esquerda e o texto à direita
+                                Row(modifier = Modifier.fillMaxSize()) {
+                                    // Imagem do exercício à esquerda
+                                    Image(
+                                        painter = painterResource(id = exercise.imageRes),
+                                        contentDescription = exercise.name,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(120.dp) // Ajusta o tamanho da imagem
+                                            .padding(8.dp) // Ajusta o espaçamento
+                                            .align(Alignment.CenterVertically)
                                     )
-                                    Text(
-                                        text = exercise.duration,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    )
+
+                                    // Conteúdo textual à direita
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .weight(1f) // Ocupa o restante do espaço
+                                    ) {
+                                        Text(
+                                            text = exercise.name,
+                                            style = MaterialTheme.typography.titleSmall
+                                        )
+                                        Text(
+                                            text = exercise.duration,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            modifier = Modifier.padding(top = 4.dp)
+                                        )
+                                    }
                                 }
                             }
                         }

@@ -47,6 +47,7 @@ fun TrainingDetailsScreen(
     navController: NavHostController,
 ) {
     val areAnimationsEnabled = settingsViewModel.areAnimationsEnabled.collectAsState()
+    val favoriteExercises = settingsViewModel.favoriteExercises.collectAsState()
 
     val training =
         stretchingSessions.find { it.id.toString() == trainingId } // Usando a lista atualizada
@@ -102,6 +103,8 @@ fun TrainingDetailsScreen(
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(it.exercises) { exercise ->
+                    val isFavorite = favoriteExercises.value.contains(exercise.id.toString())
+
                     Card(
                         modifier = Modifier
                             .padding(vertical = 8.dp)
@@ -137,7 +140,7 @@ fun TrainingDetailsScreen(
                                 }
 
                                 Icon(
-                                    imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = "Favorite",
                                     tint = Color(0xFF267A9C),
                                     modifier = Modifier
@@ -145,9 +148,12 @@ fun TrainingDetailsScreen(
                                         .align(Alignment.TopEnd)
                                         .padding(12.dp)
                                         .clickable {
-                                            exercise.isFavorite.value = !exercise.isFavorite.value
-                                            isClicked.value =
-                                                true // Ativa o clique para disparar a animação
+                                            if (isFavorite) {
+                                                settingsViewModel.removeFavoriteExercise(exercise.id.toString())
+                                            } else {
+                                                settingsViewModel.addFavoriteExercise(exercise.id.toString())
+                                            }
+                                            isClicked.value = true
                                         }
                                 )
                                 // Layout com Row para alinhar a imagem à esquerda e o texto à direita
@@ -183,7 +189,7 @@ fun TrainingDetailsScreen(
                             } else {
                                 // Lógica para animações desabilitadas
                                 Icon(
-                                    imageVector = if (exercise.isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = "Favorite",
                                     tint = Color(0xFF267A9C),
                                     modifier = Modifier
@@ -191,7 +197,11 @@ fun TrainingDetailsScreen(
                                         .align(Alignment.TopEnd)
                                         .padding(12.dp)
                                         .clickable {
-                                            exercise.isFavorite.value = !exercise.isFavorite.value
+                                            if (isFavorite) {
+                                                settingsViewModel.removeFavoriteExercise(exercise.id.toString())
+                                            } else {
+                                                settingsViewModel.addFavoriteExercise(exercise.id.toString())
+                                            }
                                         }
                                 )
                                 // Layout com Row para alinhar a imagem à esquerda e o texto à direita

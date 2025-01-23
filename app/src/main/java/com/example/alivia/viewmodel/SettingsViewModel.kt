@@ -84,4 +84,11 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
             DataStoreUtils.setFavoriteExercises(context, updatedFavorites)
         }
     }
+
+    fun clearFavoriteExercises() {
+        _favoriteExercises.value = emptySet()
+        viewModelScope.launch {
+            DataStoreUtils.setFavoriteExercises(context, emptySet())
+        }
+    }
 }

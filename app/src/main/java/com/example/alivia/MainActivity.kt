@@ -194,7 +194,10 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     ) {
-                                        FavoritesScreen(navController = navController)
+                                        FavoritesScreen(
+                                            navController = navController,
+                                            settingsViewModel = settingsViewModel
+                                        )
                                     }
 
                                     composable(
