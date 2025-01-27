@@ -89,10 +89,10 @@ class MainActivity : ComponentActivity() {
 
                     // Configura o tempo de delay com base na rota de origem
                     delayTime.value = when {
-                        previousRoute?.startsWith("exerciseDetails") == true -> 1000L // Delay maior ao sair do vídeo
-                        previousRoute?.startsWith("home") == true -> 0L // Sem delay ao sair de home
+                        previousRoute?.startsWith("exerciseDetails") == true -> 1000L
+                        previousRoute?.startsWith("home") == true -> 0L
                         previousRoute?.startsWith("favorites") == true -> 300L
-                        else -> 500L // Delay padrão
+                        else -> 500L
                     }
 
                     // Atualiza a rota de origem

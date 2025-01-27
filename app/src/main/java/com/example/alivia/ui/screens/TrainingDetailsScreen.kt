@@ -43,6 +43,8 @@ import com.example.alivia.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 
 @Composable
 fun TrainingDetailsScreen(
@@ -56,7 +58,7 @@ fun TrainingDetailsScreen(
     var isScreenLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(2000) // Simulando delay de requisição
+        delay(1000)
         isScreenLoading = false
     }
 
@@ -178,8 +180,8 @@ fun TrainingDetailsScreen(
                                             isClicked.value = true
 
                                             val exerciseId = exercise.id.toString()
-                                            kotlinx.coroutines.GlobalScope.launch {
-                                                kotlinx.coroutines.delay(1000)
+                                            GlobalScope.launch {
+                                                delay(500)
 
                                                 if (isFavorite) {
                                                     settingsViewModel.removeFavoriteExercise(exerciseId)
