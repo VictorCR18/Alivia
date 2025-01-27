@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.alivia.models.stretchingSessions
 import com.example.alivia.viewmodel.SettingsViewModel
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @Composable
 fun TrainingDetailsScreen(
@@ -49,164 +53,146 @@ fun TrainingDetailsScreen(
     val areAnimationsEnabled = settingsViewModel.areAnimationsEnabled.collectAsState()
     val favoriteExercises = settingsViewModel.favoriteExercises.collectAsState()
 
-    val training =
-        stretchingSessions.find { it.id.toString() == trainingId } // Usando a lista atualizada
-    training?.let {
-        // Imagem de topo
+    var isScreenLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(2000) // Simulando delay de requisição
+        isScreenLoading = false
+    }
+
+    if (isScreenLoading) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(128.dp)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = training.imageRes),
-                contentDescription = training.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize()
-            )
+            CircularProgressIndicator(color = Color(0xFF267A9C))
+        }
+    } else {
+        val training = stretchingSessions.find { it.id.toString() == trainingId }
 
-            // Gradiente de fundo
+        training?.let { session ->
             Box(
                 modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.7f)
+                    .fillMaxWidth()
+                    .height(128.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = session.imageRes),
+                    contentDescription = session.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.7f)
+                                )
                             )
                         )
+                )
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = session.title,
+                        style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
                     )
-            )
-
-            // Conteúdo textual sobreposto
-            Column(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = training.title,
-                    style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
-                )
-                Text(
-                    text = training.description,
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
-                )
+                    Text(
+                        text = session.description,
+                        style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
+                    )
+                }
             }
-        }
 
-        Column(modifier = Modifier.padding(16.dp)) {
-            Spacer(modifier = Modifier.height(140.dp))
+            Column(modifier = Modifier.padding(16.dp)) {
+                Spacer(modifier = Modifier.height(140.dp))
 
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(it.exercises) { exercise ->
-                    val isFavorite = favoriteExercises.value.contains(exercise.id.toString())
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(session.exercises) { exercise ->
+                        val isFavorite = favoriteExercises.value.contains(exercise.id.toString())
 
-                    Card(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .clickable {
-                                navController.navigate("exerciseDetails/${exercise.id}")
-                            },
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Box(
+                        val isFavoriteLoading = remember { mutableStateOf(false) }
+
+                        val scale = remember { Animatable(1f) }
+                        val isClicked = remember { mutableStateOf(false) }
+
+                        LaunchedEffect(isClicked.value) {
+                            if (isClicked.value && areAnimationsEnabled.value) {
+                                scale.animateTo(
+                                    targetValue = 1.1f,
+                                    animationSpec = tween(150)
+                                )
+                                scale.animateTo(
+                                    targetValue = 1f,
+                                    animationSpec = tween(150)
+                                )
+                                isClicked.value = false
+                            }
+                        }
+
+                        Card(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(96.dp)
+                                .padding(vertical = 8.dp)
+                                .clickable {
+                                    navController.navigate("exerciseDetails/${exercise.id}")
+                                },
+                            elevation = CardDefaults.cardElevation(4.dp)
                         ) {
-                            // Ícone de favorito no canto superior direito com animação
-                            val scale = remember { Animatable(1f) }
-
-                            if (areAnimationsEnabled.value) {
-                                // Lógica para animações habilitadas
-                                val isClicked = remember { mutableStateOf(false) }
-
-                                LaunchedEffect(isClicked.value) {
-                                    if (isClicked.value) {
-                                        scale.animateTo(
-                                            targetValue = 1.1f,
-                                            animationSpec = tween(150) // Cresce
-                                        )
-                                        scale.animateTo(
-                                            targetValue = 1f,
-                                            animationSpec = tween(150) // Retorna ao tamanho original
-                                        )
-                                        isClicked.value = false // Reseta o clique
-                                    }
-                                }
-
-                                Icon(
-                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = "Favorite",
-                                    tint = Color(0xFF267A9C),
-                                    modifier = Modifier
-                                        .size(48.dp * scale.value) // Aplica o tamanho animado
-                                        .align(Alignment.TopEnd)
-                                        .padding(12.dp)
-                                        .clickable {
-                                            if (isFavorite) {
-                                                settingsViewModel.removeFavoriteExercise(exercise.id.toString())
-                                            } else {
-                                                settingsViewModel.addFavoriteExercise(exercise.id.toString())
-                                            }
-                                            isClicked.value = true
-                                        }
-                                )
-                                // Layout com Row para alinhar a imagem à esquerda e o texto à direita
-                                Row(modifier = Modifier.fillMaxSize()) {
-                                    // Imagem do exercício à esquerda
-                                    Image(
-                                        painter = painterResource(id = exercise.imageRes),
-                                        contentDescription = exercise.name,
-                                        contentScale = ContentScale.Fit,
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(96.dp)
+                            ) {
+                                if (isFavoriteLoading.value) {
+                                    Box(
                                         modifier = Modifier
-                                            .size(120.dp)
-                                            .padding(8.dp)
-                                            .align(Alignment.CenterVertically)
-                                    )
-
-                                    // Conteúdo textual à direita
-                                    Column(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .weight(1f)
+                                            .matchParentSize()
+                                            .background(Color.Black.copy(alpha = 0.3f)),
+                                        contentAlignment = Alignment.Center
                                     ) {
-                                        Text(
-                                            text = exercise.name,
-                                            style = MaterialTheme.typography.titleSmall
-                                        )
-                                        Text(
-                                            text = exercise.duration,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            modifier = Modifier.padding(top = 4.dp)
-                                        )
+                                        CircularProgressIndicator(color = Color(0xFF267A9C))
                                     }
                                 }
-                            } else {
-                                // Lógica para animações desabilitadas
+
                                 Icon(
                                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = "Favorite",
                                     tint = Color(0xFF267A9C),
                                     modifier = Modifier
-                                        .size(48.dp)
+                                        .size(48.dp * scale.value)
                                         .align(Alignment.TopEnd)
                                         .padding(12.dp)
                                         .clickable {
-                                            if (isFavorite) {
-                                                settingsViewModel.removeFavoriteExercise(exercise.id.toString())
-                                            } else {
-                                                settingsViewModel.addFavoriteExercise(exercise.id.toString())
+                                            isFavoriteLoading.value = true
+                                            isClicked.value = true
+
+                                            val exerciseId = exercise.id.toString()
+                                            kotlinx.coroutines.GlobalScope.launch {
+                                                kotlinx.coroutines.delay(1000)
+
+                                                if (isFavorite) {
+                                                    settingsViewModel.removeFavoriteExercise(exerciseId)
+                                                } else {
+                                                    settingsViewModel.addFavoriteExercise(exerciseId)
+                                                }
+
+                                                isFavoriteLoading.value = false
                                             }
                                         }
                                 )
-                                // Layout com Row para alinhar a imagem à esquerda e o texto à direita
+
                                 Row(modifier = Modifier.fillMaxSize()) {
-                                    // Imagem do exercício à esquerda
                                     Image(
                                         painter = painterResource(id = exercise.imageRes),
                                         contentDescription = exercise.name,
@@ -217,7 +203,6 @@ fun TrainingDetailsScreen(
                                             .align(Alignment.CenterVertically)
                                     )
 
-                                    // Conteúdo textual à direita
                                     Column(
                                         modifier = Modifier
                                             .padding(16.dp)
@@ -239,15 +224,14 @@ fun TrainingDetailsScreen(
                     }
                 }
             }
+        } ?: run {
+            Text(
+                text = "Treino não encontrado",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
-    } ?: run {
-        // Exibe uma mensagem se o treino não for encontrado
-        Text(
-            text = "Treino não encontrado",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }

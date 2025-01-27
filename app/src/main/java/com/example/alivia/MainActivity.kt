@@ -38,6 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.alivia.alarm.createExerciseAlarmChannel
 import com.example.alivia.ui.components.BottomNavigationBar
 import com.example.alivia.ui.components.DrawerContent
 import com.example.alivia.ui.components.TopBar
@@ -62,6 +63,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createExerciseAlarmChannel(this)
         setContent {
             val navController = rememberNavController()
             val drawerState = rememberDrawerState(DrawerValue.Closed)

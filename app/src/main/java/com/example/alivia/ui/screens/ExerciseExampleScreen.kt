@@ -1,5 +1,6 @@
 package com.example.alivia.ui.screens
 
+import android.content.Context
 import android.net.Uri
 import android.widget.VideoView
 import androidx.compose.foundation.layout.Box
@@ -26,9 +27,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.alivia.alarm.setAlarmForExercise
 import com.example.alivia.models.stretchingSessions
 import com.example.alivia.ui.components.sendNotification
 import com.example.alivia.viewmodel.SettingsViewModel
+import java.util.Calendar
+
+@Composable
+fun AndroidTimePickerDialog(
+    context: Context,
+    initialHour: Int,
+    initialMinute: Int,
+    onTimeSelected: (hour: Int, minute: Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        val timePicker = android.app.TimePickerDialog(
+            context,
+            { _, selectedHour, selectedMinute ->
+                onTimeSelected(selectedHour, selectedMinute)
+            },
+            initialHour,
+            initialMinute,
+            true // is24HourView
+        )
+        timePicker.setOnCancelListener {
+            onDismiss()
+        }
+        timePicker.show()
+    }
+}
 
 @Composable
 fun ExerciseExampleScreen(
@@ -37,6 +65,10 @@ fun ExerciseExampleScreen(
 ) {
     val context = LocalContext.current
     val isNotificationsEnabled = settingsViewModel.isNotificationsEnabled.collectAsState()
+
+    var showTimePicker by remember { mutableStateOf(false) }
+    var chosenHour by remember { mutableStateOf(0) }
+    var chosenMinute by remember { mutableStateOf(0) }
 
     val exercise = stretchingSessions
         .flatMap { it.exercises }
@@ -48,6 +80,39 @@ fun ExerciseExampleScreen(
     var currentProgress by remember { mutableStateOf(0) }
 
     var videoView: VideoView? by remember { mutableStateOf(null) }
+
+    if (showTimePicker) {
+        val currentTime = Calendar.getInstance()
+        val initialHour = currentTime.get(Calendar.HOUR_OF_DAY)
+        val initialMinute = currentTime.get(Calendar.MINUTE)
+
+        AndroidTimePickerDialog(
+            context = context,
+            initialHour = initialHour,
+            initialMinute = initialMinute,
+            onTimeSelected = { hour, minute ->
+                chosenHour = hour
+                chosenMinute = minute
+                showTimePicker = false
+
+                // Se o exercise estiver disponível, agendamos o alarme
+                exercise?.let {
+                    setAlarmForExercise(
+                        context = context,
+                        year = currentTime.get(Calendar.YEAR),  // se quiser data do dia
+                        month = currentTime.get(Calendar.MONTH),
+                        day = currentTime.get(Calendar.DAY_OF_MONTH),
+                        hour = chosenHour,
+                        minute = chosenMinute,
+                        exerciseName = it.name
+                    )
+                }
+            },
+            onDismiss = {
+                showTimePicker = false
+            }
+        )
+    }
 
     LaunchedEffect(videoView) {
         while (true) {
@@ -222,6 +287,21 @@ fun ExerciseExampleScreen(
             ) {
                 Text(text = "Reiniciar")
             }
+
+            Button(
+                onClick = { showTimePicker = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF267A9C),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Agendar Notificação")
+            }
+
         }
     } ?: run {
         Text(
