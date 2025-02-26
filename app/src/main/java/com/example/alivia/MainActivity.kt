@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.alivia.alarm.createExerciseAlarmChannel
@@ -46,14 +47,17 @@ import com.example.alivia.ui.screens.ExerciseExampleScreen
 import com.example.alivia.ui.screens.FavoritesScreen
 import com.example.alivia.ui.screens.HelpAndSupportScreen
 import com.example.alivia.ui.screens.HomeScreen
+import com.example.alivia.ui.screens.LoginScreen
 import com.example.alivia.ui.screens.ProfileScreen
 import com.example.alivia.ui.screens.SettingsScreen
+import com.example.alivia.ui.screens.SignUpScreen
 import com.example.alivia.ui.screens.TrainingDetailsScreen
 import com.example.alivia.ui.theme.AliviaTheme
 import com.example.alivia.viewmodel.SettingsViewModel
 import com.example.alivia.viewmodel.SettingsViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
@@ -70,6 +74,10 @@ class MainActivity : ComponentActivity() {
             val scope = rememberCoroutineScope()
             val isLoading = remember { mutableStateOf(false) }
             val delayTime = remember { mutableStateOf(500L) }
+
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            val showScaffoldBars = currentRoute != "login" && currentRoute != "signup"
 
             // Observa o estado do tema diretamente do ViewModel
             val isDarkTheme = settingsViewModel.isDarkModeEnabled.collectAsState(initial = false)
@@ -120,34 +128,29 @@ class MainActivity : ComponentActivity() {
                     },
                     content = {
                         Scaffold(
-                            topBar = {
-                                TopBar(
-                                    onOpenDrawer = { scope.launch { drawerState.open() } }
-                                )
-                            },
-                            bottomBar = { BottomNavigationBar(navController) }
+                            topBar = { if (showScaffoldBars) TopBar(onOpenDrawer = { scope.launch { drawerState.open() } }) },
+                            bottomBar = { if (showScaffoldBars) BottomNavigationBar(navController) }
                         ) { innerPadding ->
-                            // Conteúdo principal
                             Box(modifier = Modifier.fillMaxSize()) {
-                                // NavHost gerencia as rotas
                                 NavHost(
                                     navController = navController,
-                                    startDestination = "home",
+                                    startDestination = "login",
                                     modifier = Modifier.padding(innerPadding)
                                 ) {
-                                    // Tela inicial com nenhuma animação de transição
-                                    composable(
-                                        "home",
-                                        enterTransition = { EnterTransition.None },
-                                        exitTransition = { ExitTransition.None }
-                                    ) {
+
+                                    composable("login") {
+                                        LoginScreen(navController = navController)
+                                    }
+                                    composable("signup") {
+                                        SignUpScreen(navController = navController)
+                                    }
+                                    composable("home", enterTransition = { EnterTransition.None }, exitTransition = { ExitTransition.None }) {
                                         HomeScreen(
                                             navController = navController,
                                             context = LocalContext.current
                                         )
                                     }
 
-                                    // Configuração com animações para outras telas
                                     composable(
                                         "settings",
                                         enterTransition = {
