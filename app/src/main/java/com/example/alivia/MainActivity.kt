@@ -1,9 +1,11 @@
 package com.example.alivia
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -65,6 +67,7 @@ class MainActivity : ComponentActivity() {
         SettingsViewModelFactory(applicationContext)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createExerciseAlarmChannel(this)
@@ -172,8 +175,8 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         SettingsScreen(
                                             navController = navController,
-                                            onThemeToggle = {
-                                                settingsViewModel.setDarkModeEnabled(!isDarkTheme.value)
+                                            onThemeChange = { theme ->
+                                                settingsViewModel.setThemeSelection(theme) // Passa o tema selecionado para a ViewModel
                                             },
                                             settingsViewModel = settingsViewModel,
                                             context = LocalContext.current
