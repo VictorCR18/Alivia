@@ -3,6 +3,7 @@ package com.example.alivia.data.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +20,7 @@ object DataStoreUtils {
     private val NOTIFICATIONS_KEY = booleanPreferencesKey("notifications_enabled")
     private val ANIMATIONS_KEY = booleanPreferencesKey("animations_enabled")
     private val FAVORITE_EXERCISES_KEY = stringSetPreferencesKey("favorite_exercises")
+    private val THEME_SELECTION_KEY = stringPreferencesKey("theme_selection") // Para armazenar o tema selecionado
 
     // Funções para armazenar as preferências
     suspend fun setDarkMode(context: Context, isEnabled: Boolean) {
@@ -64,5 +66,17 @@ object DataStoreUtils {
     fun getFavoriteExercises(context: Context): Flow<Set<String>> =
         context.dataStore.data.map { prefs ->
             prefs[FAVORITE_EXERCISES_KEY] ?: emptySet()
+        }
+
+    // Funções para salvar e recuperar a seleção do tema
+    suspend fun setThemeSelection(context: Context, selection: String) {
+        context.dataStore.edit { prefs ->
+            prefs[THEME_SELECTION_KEY] = selection
+        }
+    }
+
+    fun getThemeSelection(context: Context): Flow<String> =
+        context.dataStore.data.map { prefs ->
+            prefs[THEME_SELECTION_KEY] ?: "Automático"
         }
 }
