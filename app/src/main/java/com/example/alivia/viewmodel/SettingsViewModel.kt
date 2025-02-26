@@ -18,6 +18,7 @@ class SettingsViewModelFactory(
     private val context: Context,
 ) : ViewModelProvider.NewInstanceFactory() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             return SettingsViewModel(context) as T
@@ -26,6 +27,7 @@ class SettingsViewModelFactory(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 class SettingsViewModel(private val context: Context) : ViewModel() {
     private val _isDarkModeEnabled = MutableStateFlow(false)
     val isDarkModeEnabled: StateFlow<Boolean> get() = _isDarkModeEnabled.asStateFlow()
@@ -51,6 +53,7 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
             _areAnimationsEnabled.value = DataStoreUtils.areAnimationsEnabled(context).first()
             _favoriteExercises.value = DataStoreUtils.getFavoriteExercises(context).first()
             _themeSelection.value = DataStoreUtils.getThemeSelection(context).first() // Carregar seleção de tema
+            applyThemeBasedOnTime() // Verifica e aplica o tema com base na hora do dia
         }
     }
 
@@ -103,10 +106,12 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
     }
 
     // Função para mudar a seleção de tema
+    @RequiresApi(Build.VERSION_CODES.O)
     fun setThemeSelection(selection: String) {
         _themeSelection.value = selection
         viewModelScope.launch {
             DataStoreUtils.setThemeSelection(context, selection)
+            applyThemeBasedOnTime() // Atualiza o tema com base na nova seleção
         }
     }
 
@@ -114,6 +119,15 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
     fun isAutoTheme(): Boolean {
         // Verifica se o tema selecionado é "Automático"
         return _themeSelection.value == "Automático"
+    }
+
+    // Função para aplicar o tema com base na hora do dia
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun applyThemeBasedOnTime() {
+        if (isAutoTheme()) {
+            val currentTime = LocalTime.now()
+            _isDarkModeEnabled.value = currentTime.isAfter(LocalTime.of(18, 0)) || currentTime.isBefore(LocalTime.of(6, 0))
+        }
     }
 
     // Função para determinar se o tema deve ser escuro ou claro baseado na hora
