@@ -169,8 +169,8 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         SettingsScreen(
                                             navController = navController,
-                                            onThemeToggle = {
-                                                settingsViewModel.setDarkModeEnabled(!isDarkTheme.value)
+                                            onThemeChange = { theme ->
+                                                settingsViewModel.setThemeSelection(theme) // Passa o tema selecionado para a ViewModel
                                             },
                                             settingsViewModel = settingsViewModel,
                                             context = LocalContext.current
