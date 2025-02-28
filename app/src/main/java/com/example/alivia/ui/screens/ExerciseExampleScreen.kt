@@ -2,7 +2,9 @@ package com.example.alivia.ui.screens
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.widget.VideoView
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -58,6 +60,7 @@ fun AndroidTimePickerDialog(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ExerciseExampleScreen(
     exerciseId: String?,
